@@ -1,3 +1,7 @@
+/*@import url('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css');*/
+/*@import url('https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css');*/
+/*@import './avenir/stylesheet.css';*/
+@import "backgrounds.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,16 +19,13 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+a{
+  text-decoration: none !important;
 }
+body{
+  margin: 0;
+}
+
 
 @layer utilities {
   .text-balance {
