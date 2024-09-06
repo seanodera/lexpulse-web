@@ -6,7 +6,7 @@ import {faker} from "@faker-js/faker";
 export default function EventsPage() {
 
     return <div className={'px-16'}>
-        <h1>Events Page</h1>
+        <h1>All Events</h1>
         <div className={'grid grid-cols-5'}>
             <div>
                 <div className={'flex justify-between items-center'}>

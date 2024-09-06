@@ -1,8 +1,8 @@
 import {Button} from "antd";
 import {HeartOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
-import {PiNeedle} from "react-icons/pi";
 import {HiOutlineLocationMarker} from "react-icons/hi";
+import {EventModel} from "@/data/types";
 
 
 export default function EventComponent({event}: { event: EventModel }) {
@@ -18,9 +18,10 @@ export default function EventComponent({event}: { event: EventModel }) {
                     shape={'circle'}
                 />
             </div>
+            <h3 className={'text-xl font-medium mt-2 mb-1 capitalize'}>{event.name}</h3>
             <div className={'flex justify-between items-center'}>
                 <div className={'px-2'}>
-                    <h3 className={'text-xl font-medium mb-1 capitalize'}>{event.name}</h3>
+
                     {/* Format date to "Sat, Aug 24, yyyy" */}
                     <h4 className={'text-primary my-0'}>
                         {format(new Date(event.date), 'EEE, MMM dd, yyyy')}
