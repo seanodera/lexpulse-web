@@ -37,6 +37,18 @@ export interface EventModel {
     tickets: Ticket[];
 }
 
+export interface Venue {
+    id: string;
+    name: string;
+    street: string;
+    city: string;
+    country: string;
+    links: {name: string, url: string}[];
+    followers: number;
+    cover: string;
+    events: EventModel[];
+}
+
 export interface Palette {
     vibrant: FinalColor | null;
     dominant: FinalColor | null;

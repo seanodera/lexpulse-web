@@ -99,7 +99,10 @@ export function CarouselItem2({image, cover, title, description, to}: {
                                 >
                                     View
                                 </Button>
-                                <Button type={'primary'} ghost size={'large'} icon={<HeartOutlined/>}/>
+                                <Button type={'primary'} ghost size={'large'} icon={<HeartOutlined/>} style={{
+                                    borderColor: (colors?.vibrant?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex)) ? (colors?.lightMuted?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex)) ? '#FFFFFF' : colors?.lightMuted?.hex : colors?.vibrant?.hex || '#FFFFFF',
+                                    color: (colors?.vibrant?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex)) ? (colors?.lightMuted?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex)) ? '#FFFFFF' : colors?.lightMuted?.hex : colors?.vibrant?.hex || '#FFFFFF',
+                                }}/>
                             </div>
                         </div>
                     </div>

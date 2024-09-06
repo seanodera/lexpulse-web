@@ -1,5 +1,5 @@
 'use client'
-import {Button} from "antd";
+import {Button, Calendar} from "antd";
 import EventComponent from "@/components/eventComponent";
 import {faker} from "@faker-js/faker";
 import {useEffect, useState} from "react";
@@ -17,11 +17,14 @@ export default function EventsPage() {
 
     return <div className={'px-16'}>
         <h1>All Events</h1>
-        <div className={'grid grid-cols-5'}>
+        <div className={'grid grid-cols-5 gap-8'}>
             <div>
                 <div className={'flex justify-between items-center'}>
                     <h2>Filters</h2>
                     <Button type={'text'} className={'text-gray-500'}>Clear All</Button>
+                </div>
+                <div>
+                    <Calendar fullscreen={false} />
                 </div>
             </div>
             <div className={'col-span-4 grid grid-cols-4 gap-8'}>
