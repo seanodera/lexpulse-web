@@ -12,7 +12,7 @@ const pathname = usePathname();
 
     return <div>
         {pathname !== '/login' &&<Header/>}
-        <div>
+        <div className={`${pathname !== '/' && pathname !== '/login' && 'pt-[4.5rem]'}`}>
             {children}
         </div>
         {pathname !== '/login' && <Footer/>}

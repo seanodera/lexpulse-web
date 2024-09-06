@@ -7,6 +7,8 @@ import {
 
 import HomeSearch from "@/components/search";
 import HomeBanner from "@/components/home/banner";
+import EventComponent from "@/components/eventComponent";
+import {faker} from "@faker-js/faker";
 
 export default function Home() {
 
@@ -15,22 +17,46 @@ export default function Home() {
         <div>
             <HomeBanner/>
             <HomeSearch/>
-            <section className={'px-16 py-8'}>
-                <h1 className={'text-3xl font-medium'}>What is <span className={'text-primary'}>popular</span> right now</h1>
-                <div className={'grid grid-cols-4 mt-4 gap-8'}>
-                    <div className={'rounded-lg bg-white bg-opacity-20 backdrop-blur-md '}>
-                        <div className={'relative flex justify-end'}>
-                            <img src={'/banner.jpg'} className={'aspect-square w-full object-cover rounded-lg'}/>
-                            <Button className={'absolute top-0 right-0 z-10 text-primary  m-3'} size={'large'} type={'default'} icon={<HeartOutlined/>}  shape={'circle'}/>
-                        </div>
-                        <div className={'px-2'}>
-                            <h3 className={'text-xl'}>Event Name</h3>
-                            <h4 className={'text-primary'}>Saturday 28th August</h4>
-                            <h4>Wembley Arena</h4>
-                        </div>
+            <div className={'bg-gradient-radial from-primary-200 to-transparent'}>
+                <section className={'px-16 py-8 '}>
+                    <h1 className={'text-2xl font-medium'}>What is <span className={'text-primary'}>popular</span> right
+                        now</h1>
+                    <div className={'grid grid-cols-4 mt-8 gap-8'}>
+                        <EventComponent event={{
+                            price: faker.number.int(200),
+                            date: new Date(),
+                            name: faker.word.noun(),
+                            cover: faker.image.urlLoremFlickr({category: 'concert'}),
+                            poster: faker.image.urlLoremFlickr({category: 'poster'}),
+                            location: faker.location.street(),
+                        }}/>
+                        <EventComponent event={{
+                            price: faker.number.int(200),
+                            date: new Date(),
+                            name: faker.word.noun(),
+                            cover: faker.image.urlLoremFlickr({category: 'concert'}),
+                            poster: faker.image.urlLoremFlickr({category: 'poster'}),
+                            location: faker.location.street(),
+                        }}/>
+                        <EventComponent event={{
+                            price: faker.number.int(200),
+                            date: new Date(),
+                            name: faker.word.noun(),
+                            cover: faker.image.urlLoremFlickr({category: 'concert'}),
+                            poster: faker.image.urlLoremFlickr({category: 'poster'}),
+                            location: faker.location.street(),
+                        }}/>
+                        <EventComponent event={{
+                            price: faker.number.int(200),
+                            date: new Date(),
+                            name: faker.word.noun(),
+                            cover: faker.image.urlLoremFlickr({category: 'concert'}),
+                            poster: faker.image.urlLoremFlickr({category: 'poster'}),
+                            location: faker.location.street(),
+                        }}/>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
             <section className={'px-16 py-8 bg-primary text-white'}>
                 <h1 className={'text-3xl text-center'}>Upcoming Events</h1>
 
