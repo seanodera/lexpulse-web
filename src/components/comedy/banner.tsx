@@ -15,7 +15,7 @@ export default function ComedyBanner() {
     }, []);
 
     return (
-        <Carousel>
+        <Carousel autoplay arrows>
             {events.map((event, index) => (
                 <CarouselItem2
                     key={index}

@@ -17,7 +17,7 @@ export default function BannerCarousel() {
         setEvents(generateEvents(2));
     }, []);
 
-    return <Carousel>
+    return <Carousel autoplay arrows>
         {events.map((event, index) => (
             <CarouselItem2
                 key={index}
