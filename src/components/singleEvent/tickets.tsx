@@ -16,8 +16,8 @@ export function TicketPurchase({event}: { event: EventModel }) {
         <table className={'w-full border-separate border-spacing-y-2 '}>
             <thead>
             <tr>
-                <td className={'py-3 px-3 font-semibold text-gray-500'}>Ticket Including lexpulse fees</td>
-                <td className={'py-3 px-3 font-semibold text-gray-500'}>Price</td>
+                <td className={'font-medium text-gray-500'}>Ticket Including lexpulse fees</td>
+                <td className={'font-medium text-gray-500'}>Price</td>
             </tr>
             </thead>
             <tbody className={'bg-dark'}>{event.tickets.sort((a, b) => a.price - b.price).map((ticket, index) => (
