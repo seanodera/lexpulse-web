@@ -35,6 +35,12 @@ export interface EventModel {
     description: string;
     category: EventType;
     tickets: Ticket[];
+    venue: {
+        name: string;
+        street: string;
+        saved: boolean;
+        id?: string;
+    };
 }
 
 export interface Venue {
@@ -43,10 +49,10 @@ export interface Venue {
     street: string;
     city: string;
     country: string;
-    links: {name: string, url: string}[];
+    links: { name: string, url: string }[];
     followers: number;
     cover: string;
-    events: EventModel[];
+
 }
 
 export interface Palette {
@@ -54,10 +60,10 @@ export interface Palette {
     dominant: FinalColor | null;
     background: FinalColor | null;
     lightVibrant: FinalColor | null,
-    darkVibrant: FinalColor |null,
-    lightMuted: FinalColor |null,
-    muted: FinalColor |null,
-    darkMuted: FinalColor |null
+    darkVibrant: FinalColor | null,
+    lightMuted: FinalColor | null,
+    muted: FinalColor | null,
+    darkMuted: FinalColor | null
 }
 
 export interface FinalPalette {

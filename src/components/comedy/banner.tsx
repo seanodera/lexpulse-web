@@ -73,7 +73,7 @@ export function CarouselItem2({image, cover, title, description, to}: {
                         />
                         <div className={'flex flex-col justify-center items-start text-start'}>
                             <h2
-                                className={`text-2xl font-semibold mb-1`}
+                                className={`text-2xl font-semibold mb-1 capitalize`}
                                 style={{
                                     color: (colors?.vibrant?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex)) ? (colors?.lightMuted?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex)) ? '#FFFFFF' : colors?.lightMuted?.hex : colors?.vibrant?.hex || '#FFFFFF', // Use vibrant color for the title or default to white
                                 }}
@@ -81,7 +81,7 @@ export function CarouselItem2({image, cover, title, description, to}: {
                                 {title}
                             </h2>
                             <p
-                                className={`line-clamp-3 my-0`}
+                                className={`line-clamp-3 mt-0`}
                                 style={{
                                     color: (colors?.darkMuted?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex))? '#FFFFFF' : '#000000' || '#FFFFFF', // Use lightMuted color for the description or default to white
                                 }}

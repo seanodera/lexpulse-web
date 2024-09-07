@@ -30,6 +30,11 @@ export function generateEvents(count: number): EventModel[] {
             category: eventType as EventType, // Random event category
             tickets: tickets, // Tickets array
             description: faker.lorem.sentence(),
+            venue: {
+                name: faker.word.noun(),
+                street: faker.location.streetAddress(),
+                saved:false,
+            }
         };
 
         events.push(event);

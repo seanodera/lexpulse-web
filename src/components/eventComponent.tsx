@@ -3,11 +3,12 @@ import {HeartOutlined} from "@ant-design/icons";
 import {format} from "date-fns";
 import {HiOutlineLocationMarker} from "react-icons/hi";
 import {EventModel} from "@/data/types";
+import Link from "next/link";
 
 
 export default function EventComponent({event}: { event: EventModel }) {
     return (
-        <div className={'rounded-lg bg-white bg-opacity-20 backdrop-blur-md'}>
+        <Link href={`events/${event.id}`} className={'rounded-lg bg-white bg-opacity-20 backdrop-blur-md'}>
             <div className={'relative flex justify-end'}>
                 <img src={event.poster} className={'aspect-square w-full object-cover rounded-lg'} alt={event.name}/>
                 <Button
@@ -31,6 +32,6 @@ export default function EventComponent({event}: { event: EventModel }) {
                 </div>
                 <h4 className={'text-primary'}>GHS {event.price.toFixed(2)}</h4>
             </div>
-        </div>
+        </Link>
     );
 }
