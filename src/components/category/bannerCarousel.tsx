@@ -68,7 +68,7 @@ export function CarouselItem2({image, cover, title, description, to}: {
                     }}
                 >
                     <div className={'max-w-screen-md gap-8 grid grid-cols-2 w-full text-center'}>
-                        <Image height={500} width={500}
+                        <img
                             src={image}
                             className={'w-full aspect-square rounded-lg border-solid border-white max-w-screen-sm'}
                             alt={'poster'}
