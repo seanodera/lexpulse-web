@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function EventComponent({event}: { event: EventModel }) {
     return (
-        <Link href={`events/${event.id}`} className={'rounded-lg bg-white bg-opacity-20 backdrop-blur-md'}>
+        <Link href={`events/${event.id}`} className={'rounded-lg bg-white bg-opacity-5 backdrop-blur-md'}>
             <div className={'relative flex justify-end'}>
                 <img src={event.poster} className={'aspect-square w-full object-cover rounded-lg'} alt={event.name}/>
                 <Button
@@ -28,7 +28,7 @@ export default function EventComponent({event}: { event: EventModel }) {
                         {format(new Date(event.date), 'EEE, MMM dd, yyyy')}
                     </h4>
                     <span className={'flex gap-2 text-opacity-20'}><HiOutlineLocationMarker/> <h4
-                        className={'text-gray-700'}>{event.location}</h4></span>
+                        className={'text-gray-500'}>{event.location}</h4></span>
                 </div>
                 <h4 className={'text-primary'}>GHS {event.price.toFixed(2)}</h4>
             </div>

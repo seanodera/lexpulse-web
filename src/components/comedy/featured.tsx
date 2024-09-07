@@ -10,7 +10,7 @@ export function FeaturedComedy() {
     const [events, setEvents] = useState<EventModel[]>([]);
 
     useEffect(() => {
-        setEvents(generateEvents(4)); // Show 2 featured events
+        setEvents(generateEvents(4));
     }, []);
 
     return (
@@ -35,7 +35,7 @@ export function WeekendLaughs() {
     const [events, setEvents] = useState<EventModel[]>([]);
 
     useEffect(() => {
-        setEvents(generateEvents(5)); // Generate 5 events for the weekend
+        setEvents(generateEvents(5));
     }, []);
 
     return (

@@ -1,17 +1,17 @@
+'use client'
 import { Button } from "antd";
 import { Field, Fieldset, Input, Label } from "@headlessui/react";
 import {CloseOutlined} from "@ant-design/icons";
-import Link from "next/link";
+import {useRouter} from "next/navigation";
 
 
 export default function LoginPage() {
+    const router = useRouter();
     return (
         <div className={' bg-gradient-radial from-primary to-dark '}>
 
      <div className={'w-screen h-screen flex justify-center items-center text-white relative bg-dark bg-opacity-80'}>
-         <Link href={'/'} className={'absolute top-0 right-0 m-4'}>
-             <Button type={'text'} className={'text-white'} size={'large'} icon={<CloseOutlined/>}/>
-         </Link>
+         <Button  onClick={() => router.back()} type={'text'} className={'text-white absolute top-0 right-0 m-4'} size={'large'} icon={<CloseOutlined/>}/>
 
          <div
              className={
