@@ -28,7 +28,8 @@ export function TicketPurchase({event}: { event: EventModel }) {
                 </tr>
             ))}</tbody>
         </table>
-        <Button type={'text'} onClick={() => setIsOpen(true)} size={'small'} className={'text-sm text-gray-500 mt-2  ms-auto'}>Buying different ticket types?</Button>
+        {event.tickets.length > 1 && <Button type={'text'} onClick={() => setIsOpen(true)} size={'small'}
+                 className={'text-sm text-gray-500 mt-2  ms-auto'}>Buying different ticket types?</Button>}
         {/*<h4 className={'font-medium text-gray-500 text-sm my-3'}>Ticket Sales close on {event.date.toDateString()} at {event.date.toTimeString()}</h4>*/}
         <div className={'flex justify-between mt-4'}>
             <div className={'flex gap-2 items-center mt-2'}>
