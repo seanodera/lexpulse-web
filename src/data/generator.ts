@@ -29,7 +29,7 @@ export function generateEvents(count: number): EventModel[] {
             id: uuidv4(), // Unique event ID
             category: eventType as EventType, // Random event category
             tickets: tickets, // Tickets array
-            description: faker.lorem.sentence(),
+            description: faker.lorem.paragraphs({min: 2, max: 3}),
             venue: {
                 name: faker.word.noun(),
                 street: faker.location.streetAddress(),
