@@ -7,6 +7,7 @@ import {Button, Tag} from "antd";
 import {ExclamationOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import {TicketPurchase} from "@/components/singleEvent/tickets";
 import EventComponent from "@/components/eventComponent";
+import CountDown from "@/components/singleEvent/countDown";
 
 
 export default function EventPage() {
@@ -35,7 +36,7 @@ export default function EventPage() {
                     />
                     <div className={'col-span-2'}>
                         <h1 className={'text-3xl font-semibold capitalize'}>{event.name}</h1>
-                        <div className={'grid grid-cols-2'}>
+                        <div className={'grid grid-cols-2 gap-8'}>
                             <div className={'mt-3'}>
                                 <h4 className={'text-gray-300'}>Date</h4>
                                 <h3 className={'font-semibold mb-1'}>{format(event.date, 'EEE, dd MMM yyyy')}</h3>
@@ -55,6 +56,10 @@ export default function EventPage() {
                                     <Tag color={'processing'}>hip-hop</Tag>
 
                                 </div>
+                            </div>
+                            <div>
+                                <h4 className={'text-gray-300'}>Ticket Sales Closing</h4>
+                                <div><CountDown date={event.date}/></div>
                             </div>
                         </div>
                     </div>

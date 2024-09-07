@@ -4,15 +4,16 @@ import {DeleteOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import {EventModel} from "@/data/types";
 import {SetStateAction, useState} from "react";
 import {Dialog, DialogPanel, DialogTitle} from "@headlessui/react";
+import {formatDate} from "date-fns";
 
 
 export function TicketPurchase({event}: { event: EventModel }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [amount, setAmount] = useState(1);
     let [isOpen, setIsOpen] = useState(false)
-    return <div>
+    return <div className={'flex flex-col'}>
         <h3 className={'text-primary font-semibold'}>Tickets</h3>
-        <table className={'w-full'}>
+        <table className={'w-full border-separate border-spacing-y-2 '}>
             <thead>
             <tr>
                 <td className={'py-3 px-3 font-semibold text-gray-500'}>Ticket Including lexpulse fees</td>
@@ -22,12 +23,14 @@ export function TicketPurchase({event}: { event: EventModel }) {
             <tbody className={'bg-dark'}>{event.tickets.sort((a, b) => a.price - b.price).map((ticket, index) => (
                 <tr className={`py-2 ${currentIndex === index ? 'bg-primary text-white' : 'bg-white bg-opacity-10 text-white'}  hover:bg-white hover:text-dark transition-all ease-linear duration-150`}
                     key={index} onClick={() => setCurrentIndex(index)}>
-                    <td className={'py-3 px-3 font-semibold'}>{ticket.name}</td>
-                    <td className={'py-3 px-3 text-end'}>GHS {ticket.price}</td>
+                    <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.name}</td>
+                    <td className={'py-3 px-3 rounded-e-lg text-end'}>GHS {ticket.price}</td>
                 </tr>
             ))}</tbody>
         </table>
-        <div className={'flex justify-between mt-2'}>
+        <Button type={'text'} onClick={() => setIsOpen(true)} size={'small'} className={'text-sm text-gray-500 mt-2  ms-auto'}>Buying different ticket types?</Button>
+        {/*<h4 className={'font-medium text-gray-500 text-sm my-3'}>Ticket Sales close on {event.date.toDateString()} at {event.date.toTimeString()}</h4>*/}
+        <div className={'flex justify-between mt-4'}>
             <div className={'flex gap-2 items-center mt-2'}>
                 <Button disabled={amount === 0} onClick={() => setAmount((prev) => prev - 1)} type={'primary'}
                         size={'large'} ghost shape={'circle'}
@@ -37,8 +40,9 @@ export function TicketPurchase({event}: { event: EventModel }) {
                         shape={'circle'}
                         icon={<PlusOutlined/>}/>
             </div>
-            <div>
-                <Button onClick={() => setIsOpen(true)} disabled={amount === 0} type={'primary'} size={'large'}>Buy Tickets</Button>
+            <div className={'flex justify-end items-center gap-2'}>
+                <h2 className={'my-0'}>GHS {(event.tickets[currentIndex].price * amount).toFixed(2)}</h2>
+                <Button  disabled={amount === 0} type={'primary'} size={'large'}>Buy Tickets</Button>
             </div>
         </div>
         <TicketPurchaseDialog event={event} isOpen={isOpen} setIsOpen={setIsOpen}/>
