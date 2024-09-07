@@ -17,6 +17,7 @@ export enum EventType {
 
 // Define the Ticket type
 export interface Ticket {
+    id:string;
     name: string;
     price: number;
     description: string;

@@ -12,6 +12,7 @@ export function generateEvents(count: number): EventModel[] {
 
         // Generate tickets
         const tickets: Ticket[] = Array.from({ length: ticketCount }, () => ({
+            id: faker.string.alphanumeric(6),
             name: faker.commerce.productName(),
             price: faker.number.float({ min: 10, max: 300, multipleOf: 0.01 }),
             description: faker.lorem.sentence(),

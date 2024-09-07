@@ -6,13 +6,16 @@ import {addHours, format} from "date-fns";
 import {Button, Tag} from "antd";
 import {ExclamationOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import {TicketPurchase} from "@/components/singleEvent/tickets";
+import EventComponent from "@/components/eventComponent";
 
 
 export default function EventPage() {
     const [event, setEvent] = useState<EventModel>();
+    const [events, setEvents] = useState<EventModel[]>([]);
 
     useEffect(() => {
         setEvent(generateEvents(1)[ 0 ]);
+        setEvents(generateEvents(5));
     }, [])
 
     if (!event) {
@@ -86,14 +89,29 @@ export default function EventPage() {
                                 <p>More Information</p>
                             </div>
                         </div>
-
-
+                        <div className={'mt-3'}>
+                            <h2 className={'font-medium'}>Line up</h2>
+                            <div className={'flex gap-1'}>
+                                <div>
+                                    <img src={event.poster} className={'rounded-full aspect-square h-20'}/>
+                                    <h4 className={'font-semibold mt-1'}>Artist Name</h4>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <TicketPurchase event={event}/>
                     </div>
                 </div>
+            </section>
 
+            <section className={'bg-dark text-white px-16 py-16'}>
+                <div>
+                    <h1 className={'text-primary text-3xl'}>More like {event.name}</h1>
+                    <div className={'grid grid-cols-4 gap-8'}>
+                        {events.slice(0,4).map((event,index) => <EventComponent key={index} event={event}/>)}
+                    </div>
+                </div>
             </section>
         </div>
     );
