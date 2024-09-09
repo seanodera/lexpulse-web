@@ -5,6 +5,7 @@ import {EventModel} from "@/data/types";
 import {SetStateAction, useState} from "react";
 import {Dialog, DialogPanel, DialogTitle} from "@headlessui/react";
 import {formatDate} from "date-fns";
+import Link from "next/link";
 
 
 export function TicketPurchase({event}: { event: EventModel }) {
@@ -29,7 +30,8 @@ export function TicketPurchase({event}: { event: EventModel }) {
             ))}</tbody>
         </table>
         {event.tickets.length > 1 && <Button type={'text'} onClick={() => setIsOpen(true)} size={'small'}
-                 className={'text-sm text-gray-500 mt-2  ms-auto'}>Buying different ticket types?</Button>}
+                                             className={'text-sm text-gray-500 mt-2  ms-auto'}>Buying different ticket
+            types?</Button>}
         {/*<h4 className={'font-medium text-gray-500 text-sm my-3'}>Ticket Sales close on {event.date.toDateString()} at {event.date.toTimeString()}</h4>*/}
         <div className={'flex justify-between mt-4'}>
             <div className={'flex gap-2 items-center mt-2'}>
@@ -42,8 +44,9 @@ export function TicketPurchase({event}: { event: EventModel }) {
                         icon={<PlusOutlined/>}/>
             </div>
             <div className={'flex justify-end items-center gap-2'}>
-                <h2 className={'my-0'}>GHS {(event.tickets[currentIndex].price * amount).toFixed(2)}</h2>
-                <Button  disabled={amount === 0} type={'primary'} size={'large'}>Buy Tickets</Button>
+                <h2 className={'my-0'}>GHS {(event.tickets[ currentIndex ].price * amount).toFixed(2)}</h2>
+                <Link href={'/checkout'}><Button disabled={amount === 0} type={'primary'} size={'large'}>Buy
+                    Tickets</Button></Link>
             </div>
         </div>
         <TicketPurchaseDialog event={event} isOpen={isOpen} setIsOpen={setIsOpen}/>
@@ -51,20 +54,29 @@ export function TicketPurchase({event}: { event: EventModel }) {
 }
 
 
-export function TicketPurchaseDialog({event, isOpen, setIsOpen}: { event: EventModel, isOpen: boolean, setIsOpen: (value: SetStateAction<boolean>) => void }) {
-    const [cart, setCart] = useState<any[]>([]);
+export function TicketPurchaseDialog({event, isOpen, setIsOpen}: {
+    event: EventModel,
+    isOpen: boolean,
+    setIsOpen: (value: SetStateAction<boolean>) => void
+}) {
+    const [cart, setCart] = useState<{
+        id: string,
+        name: string,
+        amount: number;
+        price: number;
+    }[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [amount, setAmount] = useState(1);
 
     const addToCart = () => {
-        const selectedTicket = event.tickets[currentIndex];
+        const selectedTicket = event.tickets[ currentIndex ];
         const existingCartItem = cart.find(item => item.id === selectedTicket.id);
 
         if (existingCartItem) {
             // Update quantity and price if ticket already in cart
             setCart(cart.map(item =>
                 item.id === selectedTicket.id
-                    ? { ...item, amount: item.amount + amount, price: item.price + selectedTicket.price * amount }
+                    ? {...item, amount: item.amount + amount, price: item.price + selectedTicket.price * amount}
                     : item
             ));
         } else {
@@ -89,8 +101,9 @@ export function TicketPurchaseDialog({event, isOpen, setIsOpen}: { event: EventM
     return (
         <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
             <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-dark bg-opacity-60">
-                <DialogPanel className="max-w-3xl w-full min-h-80 border bg-white overflow-hidden grid grid-cols-3  rounded-lg">
-                    <div className={'col-span-2 p-4'}>
+                <DialogPanel
+                    className="max-w-3xl w-full min-h-80 border bg-white overflow-hidden grid grid-cols-5  rounded-lg">
+                    <div className={'col-span-3 p-4'}>
                         <DialogTitle className="font-bold">Review Tickets</DialogTitle>
                         <table className={'w-full border-separate border-spacing-y-2'}>
                             <thead>
@@ -110,18 +123,20 @@ export function TicketPurchaseDialog({event, isOpen, setIsOpen}: { event: EventM
                             </tbody>
                         </table>
                     </div>
-                    <div className={'bg-dark text-white flex flex-col p-4'}>
+                    <div className={'col-span-2 bg-dark text-white flex flex-col p-4'}>
                         <h3 className={'font-semibold'}>Cart</h3>
                         {cart.length > 0 ? cart.map((cartItem, index) => (
-                            <div key={index} className={'flex justify-between items-center w-full border-b border-gray-500 pb-2 mb-2'}>
+                            <div key={index}
+                                 className={'flex justify-between items-center w-full border-b border-gray-500 pb-2 mb-2'}>
                                 <div className={'group w-full'}>
                                     <h4>{cartItem.name}</h4>
                                     <div className={'flex justify-between w-full'}>
                                         <h4 className={'text-sm'}>Qty: {cartItem.amount}</h4>
-                                        <h4 className={'text-primary'}>GHS {cartItem.price}</h4>
+                                        <h4 className={'text-primary'}>GHS {cartItem.price.toFixed(2)}</h4>
                                     </div>
                                 </div>
-                                <Button onClick={() => removeFromCart(index)} size={'small'} type={'text'} danger shape={'circle'} icon={<DeleteOutlined/>}/>
+                                <Button onClick={() => removeFromCart(index)} size={'small'} type={'text'} danger
+                                        shape={'circle'} icon={<DeleteOutlined/>}/>
                             </div>
                         )) : (
                             <p>Your cart is empty.</p>
@@ -131,15 +146,17 @@ export function TicketPurchaseDialog({event, isOpen, setIsOpen}: { event: EventM
                             <h4>Total Price: GHS {totalPrice.toFixed(2)}</h4>
                         </div>
                     </div>
-                    <div className={'col-span-2 flex justify-between items-center gap-2 px-4'}>
+                    <div className={'col-span-3 flex justify-between items-center gap-2 p-4'}>
                         <div className={'flex gap-2 items-center mt-2'}>
-                            <Button disabled={amount === 0} onClick={() => setAmount((prev) => Math.max(1, prev - 1))} type={'primary'} ghost shape={'circle'} icon={<MinusOutlined/>}/>
+                            <Button disabled={amount === 0} onClick={() => setAmount((prev) => Math.max(1, prev - 1))}
+                                    type={'primary'} ghost shape={'circle'} icon={<MinusOutlined/>}/>
                             <h1 className={'my-0 text-xl'}>{amount}</h1>
-                            <Button onClick={() => setAmount((prev) => prev + 1)} type={'primary'} ghost shape={'circle'} icon={<PlusOutlined/>}/>
+                            <Button onClick={() => setAmount((prev) => prev + 1)} type={'primary'} ghost
+                                    shape={'circle'} icon={<PlusOutlined/>}/>
                         </div>
                         <Button onClick={addToCart} disabled={amount === 0} type={'primary'}>Add To Cart</Button>
                     </div>
-                    <div className={'bg-dark flex items-center justify-end gap-2 pe-4'}>
+                    <div className={' col-span-2 bg-dark flex items-center justify-end gap-2 p-4'}>
                         <Button onClick={() => setIsOpen(false)} type={'primary'} danger ghost>Close</Button>
                         <Button type={'primary'}>Check Out</Button>
                     </div>

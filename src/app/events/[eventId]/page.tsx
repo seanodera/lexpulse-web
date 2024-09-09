@@ -1,13 +1,10 @@
 'use client'
 import {useEffect, useState} from "react";
-import {EventModel} from "@/data/types";
+import {EventModel, EventType} from "@/data/types";
 import {generateEvents} from "@/data/generator";
-import {addHours, format} from "date-fns";
-import {Button, Tag} from "antd";
-import {ExclamationOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import {TicketPurchase} from "@/components/singleEvent/tickets";
 import EventComponent from "@/components/eventComponent";
-import CountDown from "@/components/singleEvent/countDown";
+import SingleEventBanner from "@/components/singleEvent/banner";
 
 
 export default function EventPage() {
@@ -25,47 +22,8 @@ export default function EventPage() {
 
     return (
         <div>
-            <div className={'bg-cover bg-no-repeat'} style={{
-                backgroundImage: `url("${event.cover}")`
-            }}>
-                <div className={'py-8 px-16 backdrop-blur bg-dark bg-opacity-30 text-white grid grid-cols-4 gap-8'}>
-                    <img
-                        src={event.poster}
-                        className={'w-full aspect-square rounded-lg border-solid border-white max-w-screen-sm'}
-                        alt={'poster'}
-                    />
-                    <div className={'col-span-2'}>
-                        <h1 className={'text-3xl font-semibold capitalize'}>{event.name}</h1>
-                        <div className={'grid grid-cols-2 gap-8'}>
-                            <div className={'mt-3'}>
-                                <h4 className={'text-gray-300'}>Date</h4>
-                                <h3 className={'font-semibold mb-1'}>{format(event.date, 'EEE, dd MMM yyyy')}</h3>
-                                <p>{format(event.date, 'HH:mm')} - {format(addHours(event.date, 5), 'HH:mm')}</p>
-                            </div>
-
-                            <div className={'mt-3'}>
-                                <h4 className={'text-gray-300'}>Venue</h4>
-                                <h3 className={'font-semibold mb-1'}>{event.venue.name} </h3>
-                                <p>{event.venue.street}, {event.location}</p>
-                            </div>
-
-                            <div>
-                                <h4 className={'text-gray-300'}>Genre</h4>
-                                <div className={'flex flex-wrap gap-1'}>
-                                    <Tag color={'processing'}>Rock</Tag>
-                                    <Tag color={'processing'}>hip-hop</Tag>
-
-                                </div>
-                            </div>
-                            <div>
-                                <h4 className={'text-gray-300'}>Ticket Sales Closing</h4>
-                                <div><CountDown date={event.date}/></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <section className={'py-8 px-16'}>
+            <SingleEventBanner event={event}/>
+            <section className={`py-8 px-16 ${event.category === EventType.clubbing ? 'bg-dark text-white' : ''}`}>
                 <div className={'grid grid-cols-2 gap-8'}>
                     <div>
 
@@ -114,7 +72,7 @@ export default function EventPage() {
                 <div>
                     <h1 className={'text-primary text-3xl'}>More like {event.name}</h1>
                     <div className={'grid grid-cols-4 gap-8'}>
-                        {events.slice(0,4).map((event,index) => <EventComponent key={index} event={event}/>)}
+                        {events.slice(0, 4).map((event, index) => <EventComponent key={index} event={event}/>)}
                     </div>
                 </div>
             </section>
