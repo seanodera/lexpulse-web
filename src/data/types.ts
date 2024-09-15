@@ -32,7 +32,7 @@ export interface EventModel {
     eventName: string;
     eventHostId: string;
     poster: string;
-    eventDate: Date; // Event date
+    eventDate: Date | string; // Event date
     location: string;
     // price: number;
     cover: string;
@@ -42,8 +42,8 @@ export interface EventModel {
     ticketInfo: Ticket[];
     discount?: Discount[];
     createdAt: Date;
-    startSalesDate?: Date; // Optional
-    endSalesDate?: Date; // Optional
+    startSalesDate?: Date | string; // Optional
+    endSalesDate?: Date | string; // Optional
     eventEnd?: string; // Optional
     minAge?: number; // Optional minimum age restriction
     dress?: string; // Optional dress code
@@ -69,8 +69,8 @@ export interface Ticket {
     ticketsAvailable: number;
     ticketsLeft: number;
     sold: number;
-    saleEnd?: Date; // Optional
-    saleStart?: Date; // Optional
+    saleEnd?: Date | string; // Optional
+    saleStart?: Date | string; // Optional
 }
 
 export interface Discount {
@@ -78,8 +78,8 @@ export interface Discount {
     ticketIds: string[];
     type: 'FlatRate' | 'Percentage';
     value: number;
-    start: Date;
-    end: Date;
+    start: Date | string;
+    end: Date | string;
 }
 
 export interface Venue {

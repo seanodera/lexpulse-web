@@ -4,10 +4,25 @@ import {format} from "date-fns";
 import {HiOutlineLocationMarker} from "react-icons/hi";
 import {EventModel} from "@/data/types";
 import Link from "next/link";
+import {useEffect, useState} from "react";
 
 
 export default function EventComponent({event}: { event: EventModel }) {
-    const lowestPrice = event.ticketInfo.sort((a,b) => a.price - b.price)[event.ticketInfo.length-1].price;
+
+        const [lowestPrice, setLowestPrice] = useState(0);
+
+        useEffect(() => {
+            if (event.ticketInfo && event.ticketInfo.length > 0) {
+                // Create a shallow copy of the array before sorting
+                const sortedTickets = [...event.ticketInfo].sort((a, b) => a.price - b.price);
+                const lowest = sortedTickets[0].price;
+                setLowestPrice(lowest);
+            } else {
+                setLowestPrice(0);
+            }
+        }, [event.ticketInfo]);
+
+
     return (
         <Link href={`events/${event._id}`} className={'rounded-lg bg-white bg-opacity-5 backdrop-blur-md'}>
             <div className={'relative flex justify-end'}>
@@ -31,7 +46,7 @@ export default function EventComponent({event}: { event: EventModel }) {
                     <span className={'flex gap-2 text-opacity-20'}><HiOutlineLocationMarker/> <h4
                         className={'text-gray-500'}>{event.location}</h4></span>
                 </div>
-                <h4 className={'text-primary'}>{event.currency} {lowestPrice}</h4>
+                <h4 className={'text-primary'}>{event.currency} {lowestPrice === 0? 'Free' : lowestPrice.toFixed(2)}</h4>
             </div>
         </Link>
     );

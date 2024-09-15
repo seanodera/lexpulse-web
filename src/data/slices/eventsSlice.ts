@@ -95,12 +95,12 @@ export const fetchCategory = createAsyncThunk('events/fetchCategory', async (cat
 export const fetchEventById = createAsyncThunk('events/fetchById', async (id: string, { getState, dispatch }) => {
     try {
         const { events } = getState() as { events: eventsState };
-
-        let event = events.fetchedEvents.flat().find((value) => value._id === id);
+        console.log(events.fetchedEvents)
+        let event = events.fetchedEvents.find((value) => value._id === id);
 
         if (!event) {
             const res = await axios.get(`${baseUrl}/api/v1/events/${id}`);
-            event = res.data.data;
+            event = res.data.data.event;
             dispatch(addEvent(event as EventModel));
         }
 
@@ -129,6 +129,7 @@ const EventsSlice = createSlice({
             .addCase(fetchUpcoming.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
                 state.loading = false;
                 state.upcoming = action.payload;
+                console.log(action.payload)
                 state.fetchedEvents = [...state.fetchedEvents, ...action.payload]; // Avoid nested array
             })
             .addCase(fetchUpcoming.rejected, (state,action) => {
@@ -143,6 +144,7 @@ const EventsSlice = createSlice({
             .addCase(fetchEventById.fulfilled, (state, action) => {
                 state.catLoading = false;
                 state.focusEvent = action.payload;
+                console.log(action.payload)
             })
             .addCase(fetchEventById.rejected, (state) => {
                 state.catLoading = false;

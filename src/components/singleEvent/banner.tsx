@@ -5,7 +5,7 @@ import CountDown from "@/components/singleEvent/countDown";
 
 
 export default function SingleEventBanner({event}: { event: EventModel }) {
-
+    console.log(event);
     return <div className={'bg-cover bg-no-repeat'} style={{
         backgroundImage: `url("${event.cover}")`
     }}>
@@ -20,7 +20,7 @@ export default function SingleEventBanner({event}: { event: EventModel }) {
                 <div className={'grid grid-cols-2 gap-8'}>
                     <div className={'mt-3'}>
                         <h4 className={'text-gray-300'}>Date</h4>
-                        <h3 className={'font-semibold mb-1'}>{format(event.eventDate, 'EEE, dd MMM yyyy')}</h3>
+                        <h3 className={'font-semibold mb-1'}>{format(new Date(event.eventDate), 'EEE, dd MMM yyyy')}</h3>
                         <p>{format(event.eventDate, 'HH:mm')} - {event.eventEnd && event.eventEnd}</p>
                     </div>
 

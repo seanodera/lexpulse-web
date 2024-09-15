@@ -27,7 +27,7 @@ export default function EventPage() {
     if (!event) {
         return <div></div>
     }
-
+    console.log(event);
     return (
         <div>
             <SingleEventBanner event={event}/>

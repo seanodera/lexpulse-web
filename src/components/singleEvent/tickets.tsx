@@ -2,7 +2,7 @@
 import {Button} from "antd";
 import {DeleteOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import {EventModel} from "@/data/types";
-import {SetStateAction, useState} from "react";
+import {SetStateAction, useEffect, useState} from "react";
 import {Dialog, DialogPanel, DialogTitle} from "@headlessui/react";
 import {formatDate} from "date-fns";
 import Link from "next/link";
@@ -11,7 +11,11 @@ import Link from "next/link";
 export function TicketPurchase({event}: { event: EventModel }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [amount, setAmount] = useState(1);
-    let [isOpen, setIsOpen] = useState(false)
+    let [isOpen, setIsOpen] = useState(false);
+    const [sortedTicketInfo,setSortedTicketInfo] = useState([...event.ticketInfo].sort((a, b) => a.price - b.price));
+    useEffect(() => {
+        setSortedTicketInfo([...event.ticketInfo].sort((a, b) => a.price - b.price))
+    }, [event.ticketInfo]);
     return <div className={'flex flex-col'}>
         <h3 className={'text-primary font-semibold'}>Tickets</h3>
         <table className={'w-full border-separate border-spacing-y-2 '}>
@@ -21,7 +25,7 @@ export function TicketPurchase({event}: { event: EventModel }) {
                 <td className={'font-medium text-gray-500'}>Price</td>
             </tr>
             </thead>
-            <tbody className={'bg-dark'}>{event.ticketInfo.sort((a, b) => a.price - b.price).map((ticket, index) => (
+            <tbody className={'bg-dark'}>{sortedTicketInfo.map((ticket, index) => (
                 <tr className={`py-2 ${currentIndex === index ? 'bg-primary text-white' : 'bg-white bg-opacity-10 text-white'}  hover:bg-white hover:text-dark transition-all ease-linear duration-150`}
                     key={index} onClick={() => setCurrentIndex(index)}>
                     <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.ticketType}</td>
@@ -44,7 +48,7 @@ export function TicketPurchase({event}: { event: EventModel }) {
                         icon={<PlusOutlined/>}/>
             </div>
             <div className={'flex justify-end items-center gap-2'}>
-                <h2 className={'my-0'}>GHS {(event.ticketInfo[ currentIndex ].price * amount).toFixed(2)}</h2>
+                <h2 className={'my-0'}>GHS {(sortedTicketInfo[ currentIndex ].price * amount).toFixed(2)}</h2>
                 <Link href={'/checkout'}><Button disabled={amount === 0} type={'primary'} size={'large'}>Buy
                     Tickets</Button></Link>
             </div>
@@ -65,11 +69,15 @@ export function TicketPurchaseDialog({event, isOpen, setIsOpen}: {
         amount: number;
         price: number;
     }[]>([]);
+    const [sortedTicketInfo,setSortedTicketInfo] = useState([...event.ticketInfo].sort((a, b) => a.price - b.price));
+    useEffect(() => {
+        setSortedTicketInfo([...event.ticketInfo].sort((a, b) => a.price - b.price))
+    }, [event.ticketInfo]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [amount, setAmount] = useState(1);
 
     const addToCart = () => {
-        const selectedTicket = event.ticketInfo[ currentIndex ];
+        const selectedTicket = sortedTicketInfo[ currentIndex ];
         const existingCartItem = cart.find(item => item.id === selectedTicket._id);
 
         if (existingCartItem) {
@@ -113,7 +121,7 @@ export function TicketPurchaseDialog({event, isOpen, setIsOpen}: {
                             </tr>
                             </thead>
                             <tbody>
-                            {event.ticketInfo.sort((a, b) => a.price - b.price).map((ticket, index) => (
+                            {sortedTicketInfo.map((ticket, index) => (
                                 <tr className={`py-2 ${currentIndex === index ? 'bg-primary text-white' : 'bg-dark bg-opacity-85 text-white'} rounded-xl  hover:bg-white hover:text-dark transition-all ease-linear duration-150`}
                                     key={index} onClick={() => setCurrentIndex(index)}>
                                     <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.ticketType}</td>
