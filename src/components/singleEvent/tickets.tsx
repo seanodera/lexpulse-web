@@ -21,15 +21,15 @@ export function TicketPurchase({event}: { event: EventModel }) {
                 <td className={'font-medium text-gray-500'}>Price</td>
             </tr>
             </thead>
-            <tbody className={'bg-dark'}>{event.tickets.sort((a, b) => a.price - b.price).map((ticket, index) => (
+            <tbody className={'bg-dark'}>{event.ticketInfo.sort((a, b) => a.price - b.price).map((ticket, index) => (
                 <tr className={`py-2 ${currentIndex === index ? 'bg-primary text-white' : 'bg-white bg-opacity-10 text-white'}  hover:bg-white hover:text-dark transition-all ease-linear duration-150`}
                     key={index} onClick={() => setCurrentIndex(index)}>
-                    <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.name}</td>
+                    <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.ticketType}</td>
                     <td className={'py-3 px-3 rounded-e-lg text-end'}>GHS {ticket.price}</td>
                 </tr>
             ))}</tbody>
         </table>
-        {event.tickets.length > 1 && <Button type={'text'} onClick={() => setIsOpen(true)} size={'small'}
+        {event.ticketInfo.length > 1 && <Button type={'text'} onClick={() => setIsOpen(true)} size={'small'}
                                              className={'text-sm text-gray-500 mt-2  ms-auto'}>Buying different ticket
             types?</Button>}
         {/*<h4 className={'font-medium text-gray-500 text-sm my-3'}>Ticket Sales close on {event.date.toDateString()} at {event.date.toTimeString()}</h4>*/}
@@ -44,7 +44,7 @@ export function TicketPurchase({event}: { event: EventModel }) {
                         icon={<PlusOutlined/>}/>
             </div>
             <div className={'flex justify-end items-center gap-2'}>
-                <h2 className={'my-0'}>GHS {(event.tickets[ currentIndex ].price * amount).toFixed(2)}</h2>
+                <h2 className={'my-0'}>GHS {(event.ticketInfo[ currentIndex ].price * amount).toFixed(2)}</h2>
                 <Link href={'/checkout'}><Button disabled={amount === 0} type={'primary'} size={'large'}>Buy
                     Tickets</Button></Link>
             </div>
@@ -69,21 +69,21 @@ export function TicketPurchaseDialog({event, isOpen, setIsOpen}: {
     const [amount, setAmount] = useState(1);
 
     const addToCart = () => {
-        const selectedTicket = event.tickets[ currentIndex ];
-        const existingCartItem = cart.find(item => item.id === selectedTicket.id);
+        const selectedTicket = event.ticketInfo[ currentIndex ];
+        const existingCartItem = cart.find(item => item.id === selectedTicket._id);
 
         if (existingCartItem) {
             // Update quantity and price if ticket already in cart
             setCart(cart.map(item =>
-                item.id === selectedTicket.id
+                item.id === selectedTicket._id
                     ? {...item, amount: item.amount + amount, price: item.price + selectedTicket.price * amount}
                     : item
             ));
         } else {
             // Add new ticket to the cart
             setCart([...cart, {
-                id: selectedTicket.id,
-                name: selectedTicket.name,
+                id: selectedTicket._id,
+                name: selectedTicket.ticketType,
                 amount: amount,
                 price: selectedTicket.price * amount
             }]);
@@ -113,10 +113,10 @@ export function TicketPurchaseDialog({event, isOpen, setIsOpen}: {
                             </tr>
                             </thead>
                             <tbody>
-                            {event.tickets.sort((a, b) => a.price - b.price).map((ticket, index) => (
+                            {event.ticketInfo.sort((a, b) => a.price - b.price).map((ticket, index) => (
                                 <tr className={`py-2 ${currentIndex === index ? 'bg-primary text-white' : 'bg-dark bg-opacity-85 text-white'} rounded-xl  hover:bg-white hover:text-dark transition-all ease-linear duration-150`}
                                     key={index} onClick={() => setCurrentIndex(index)}>
-                                    <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.name}</td>
+                                    <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.ticketType}</td>
                                     <td className={'py-3 px-3 rounded-e-lg text-end'}>GHS {ticket.price}</td>
                                 </tr>
                             ))}

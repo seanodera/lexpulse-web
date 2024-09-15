@@ -13,7 +13,6 @@ export default function Header() {
     const navBarTop = () => {
         if (window !== undefined) {
             let height = window.scrollY;
-            console.log(height)
             setWindowHeight(height);
         }
     };

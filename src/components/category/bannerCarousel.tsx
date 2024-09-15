@@ -1,12 +1,13 @@
 'use client'
 import {Button, Carousel} from "antd";
 import {useEffect, useState} from "react";
-import {EventModel, Palette} from "@/data/types";
-import {extractImageColors, getColorPalette} from "@/data/utils";
+import {EventModel} from "@/data/types";
+
 import {HeartOutlined} from "@ant-design/icons";
 import {generateEvents} from "@/data/generator";
 import Link from "next/link";
 import Image from "next/image";
+import {extractImageColors, getColorPalette, Palette} from "@/data/palette";
 
 
 export default function BannerCarousel() {
@@ -22,7 +23,7 @@ export default function BannerCarousel() {
             <CarouselItem2
                 key={index}
                 image={event.poster}
-                title={event.name}
+                title={event.eventName}
                 to={'/comedy'}
                 cover={event.cover}
                 description={event.description}

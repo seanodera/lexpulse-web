@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 const primaryColor = {
   '50': '#eef0ff',
@@ -12,20 +12,38 @@ const primaryColor = {
   '800': '#3f2da6',
   '900': '#372c83',
   '950': '#221a4c',
-  DEFAULT: '#584cf4'
+  DEFAULT: '#584cf4',
+};
+
+const darkColors = {
+  primary: '#3f2da6',
+  dark: '#080714',
+  background: '#121212',
+  surface: '#1F1F1F',
+  text: '#E4E4E4',
+  error: '#CF6679',
+  warning: '#FFB020',
 };
 
 const config: Config = {
   important: true,
+  darkMode: 'class', // or 'media' for system-based dark mode
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   corePlugins: { preflight: false },
   theme: {
     extend: {
+      colors: {
+        primary: primaryColor,
+        dark: '#080714',
+        danger: '#FF4D4F',
+        warning: '#faad14',
+        darkTheme: darkColors, // Adding dark theme colors
+      },
       fontFamily: {
         sans: [
           '-apple-system',
@@ -42,20 +60,12 @@ const config: Config = {
           '"Noto Color Emoji"',
         ],
       },
-      colors: {
-        primary: primaryColor,
-        dark: '#080714',
-        danger: '#FF4D4F',
-        warning: '#faad14',
-      },
-
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
-
       aspectRatio: {
-        '20/7': '20 / 7'
+        '20/7': '20 / 7',
       },
       maxWidth: {
         '1/4': '25%',

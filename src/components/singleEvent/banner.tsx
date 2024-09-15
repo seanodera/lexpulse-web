@@ -16,12 +16,12 @@ export default function SingleEventBanner({event}: { event: EventModel }) {
                 alt={'poster'}
             />
             <div className={'col-span-2'}>
-                <h1 className={'text-3xl font-semibold capitalize'}>{event.name}</h1>
+                <h1 className={'text-3xl font-semibold capitalize'}>{event.eventName}</h1>
                 <div className={'grid grid-cols-2 gap-8'}>
                     <div className={'mt-3'}>
                         <h4 className={'text-gray-300'}>Date</h4>
-                        <h3 className={'font-semibold mb-1'}>{format(event.date, 'EEE, dd MMM yyyy')}</h3>
-                        <p>{format(event.date, 'HH:mm')} - {format(addHours(event.date, 5), 'HH:mm')}</p>
+                        <h3 className={'font-semibold mb-1'}>{format(event.eventDate, 'EEE, dd MMM yyyy')}</h3>
+                        <p>{format(event.eventDate, 'HH:mm')} - {event.eventEnd && event.eventEnd}</p>
                     </div>
 
                     <div className={'mt-3'}>
@@ -40,7 +40,7 @@ export default function SingleEventBanner({event}: { event: EventModel }) {
                     </div>
                     <div>
                         <h4 className={'text-gray-300'}>Ticket Sales Closing</h4>
-                        <div><CountDown date={event.date}/></div>
+                        <div><CountDown date={event.eventDate}/></div>
                     </div>
                 </div>
             </div>

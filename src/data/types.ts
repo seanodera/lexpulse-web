@@ -1,47 +1,85 @@
-// Define the EventType enum
-import {FinalColor} from "extract-colors/lib/types/Color";
 
 export enum EventType {
-    'clubbing',
-    'comedy',
-    'festival',
-    'concerts',
-    'sports',
-    'theater',
-    'conference',
-    'exhibition',
-    'workshop',
-    'seminar',
-    'movie',
+    Clubbing = "clubbing",
+    Comedy = "comedy",
+    Festival = "festival",
+    Concerts = "concerts",
+    Sports = "sports",
+    Theater = "theater",
+    Conference = "conference",
+    Exhibition = "exhibition",
+    Workshop = "workshop",
+    Seminar = "seminar",
+    Movie = "movie",
 }
 
-// Define the Ticket type
-export interface Ticket {
-    id:string;
-    name: string;
-    price: number;
-    description: string;
-    stock: number;
-}
+// Extract constant array for potential reuse and increased readability
+export const EventTypeList = [
+    EventType.Clubbing,
+    EventType.Comedy,
+    EventType.Festival,
+    EventType.Concerts,
+    EventType.Sports,
+    EventType.Theater,
+    EventType.Conference,
+    EventType.Exhibition,
+    EventType.Workshop,
+    EventType.Seminar,
+    EventType.Movie
+];
 
-// Define the EventModel type
 export interface EventModel {
-    name: string;
+    eventName: string;
+    eventHostId: string;
     poster: string;
-    date: Date; // Using Date object for better date manipulation
+    eventDate: Date; // Event date
     location: string;
-    price: number;
+    // price: number;
     cover: string;
-    id: string;
+    _id: string;
     description: string;
     category: EventType;
-    tickets: Ticket[];
+    ticketInfo: Ticket[];
+    discount?: Discount[];
+    createdAt: Date;
+    startSalesDate?: Date; // Optional
+    endSalesDate?: Date; // Optional
+    eventEnd?: string; // Optional
+    minAge?: number; // Optional minimum age restriction
+    dress?: string; // Optional dress code
+    lastEntry?: string;
+    country: string;
+    currency: string;
+    approved: boolean;
     venue: {
         name: string;
         street: string;
+        city: string;
+        country: string;
+        district: string;
         saved: boolean;
         id?: string;
     };
+}
+
+export interface Ticket {
+    _id: string;
+    ticketType: string;
+    price: number;
+    ticketsAvailable: number;
+    ticketsLeft: number;
+    sold: number;
+    saleEnd?: Date; // Optional
+    saleStart?: Date; // Optional
+}
+
+export interface Discount {
+    id: string;
+    ticketIds: string[];
+    type: 'FlatRate' | 'Percentage';
+    value: number;
+    start: Date;
+    end: Date;
 }
 
 export interface Venue {
@@ -49,26 +87,25 @@ export interface Venue {
     name: string;
     street: string;
     city: string;
+    district: string;
     country: string;
     links: { name: string, url: string }[];
     followers: number;
     cover: string;
-
+    capacity: number;
+    type: string;
+    yearEvents: number | 0;
+    description?: string;
+    phone: string;
+    email: string;
 }
 
-export interface Palette {
-    vibrant: FinalColor | null;
-    dominant: FinalColor | null;
-    background: FinalColor | null;
-    lightVibrant: FinalColor | null,
-    darkVibrant: FinalColor | null,
-    lightMuted: FinalColor | null,
-    muted: FinalColor | null,
-    darkMuted: FinalColor | null
+export interface Purchase {
+    id: string;
+    user: string;
+    eventName: string;
+    ticketQuantity: number;
+    purchaseDate: string;
+    totalAmount: number;
 }
 
-export interface FinalPalette {
-    background: FinalColor | null;
-    textColor: FinalColor | null;
-    buttonColor: FinalColor | null;
-}

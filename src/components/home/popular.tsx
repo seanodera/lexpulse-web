@@ -1,15 +1,12 @@
+'use client'
 import EventComponent from "@/components/eventComponent";
-import {faker} from "@faker-js/faker";
-import {useEffect, useState} from "react";
-import {EventModel} from "@/data/types";
-import {generateEvents} from "@/data/generator";
+import {useAppSelector} from "@/hooks/hooks";
+import {selectUpcomingEvents} from "@/data/slices/eventsSlice";
 
 
 export default function HomePopular() {
-    const [events,setEvents] = useState<EventModel[]>([]);
-    useEffect(() => {
-        setEvents(generateEvents(4));
-    }, []);
+    const events = useAppSelector(selectUpcomingEvents);
+  
     return <div className={'bg-gradient-radial from-primary-200 to-transparent'}>
         <section className={'px-16 py-8 '}>
             <h1 className={'text-2xl font-medium'}>What is <span className={'text-primary'}>popular</span> right

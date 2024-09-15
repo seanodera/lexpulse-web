@@ -5,16 +5,24 @@ import {generateEvents} from "@/data/generator";
 import {TicketPurchase} from "@/components/singleEvent/tickets";
 import EventComponent from "@/components/eventComponent";
 import SingleEventBanner from "@/components/singleEvent/banner";
+import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
+import {useParams} from "next/navigation";
+import {fetchEventById, selectFocusEvent, selectUpcomingEvents} from "@/data/slices/eventsSlice";
 
 
 export default function EventPage() {
-    const [event, setEvent] = useState<EventModel>();
-    const [events, setEvents] = useState<EventModel[]>([]);
-
+    const { eventId } = useParams();
+    const dispatch = useAppDispatch();
+    const event = useAppSelector(selectFocusEvent) ;
+    const events = useAppSelector(selectUpcomingEvents);
     useEffect(() => {
-        setEvent(generateEvents(1)[ 0 ]);
-        setEvents(generateEvents(5));
-    }, [])
+        if (eventId ){
+            if (!event || event._id !== eventId){
+                console.log(eventId)
+                dispatch(fetchEventById(eventId.toString()));
+            }
+        }
+    }, [dispatch, event, eventId]);
 
     if (!event) {
         return <div></div>
@@ -23,7 +31,7 @@ export default function EventPage() {
     return (
         <div>
             <SingleEventBanner event={event}/>
-            <section className={`py-8 px-16 ${event.category === EventType.clubbing ? 'bg-dark text-white' : ''}`}>
+            <section className={`py-8 px-16 ${event.category === EventType.Clubbing ? 'bg-dark text-white' : ''}`}>
                 <div className={'grid grid-cols-2 gap-8'}>
                     <div>
 
@@ -33,24 +41,24 @@ export default function EventPage() {
                         <div className={'grid grid-cols-2 gap-8'}>
                             <div>
                                 <h4 className={'text-gray-500'}>minimum Age</h4>
-                                <h4>18+</h4>
+                                <h4>{event.minAge}+</h4>
                             </div>
                             <div>
                                 <h4 className={'text-gray-500'}>Dress Code</h4>
-                                <h4>All white</h4>
+                                <h4>{event.dress}</h4>
                             </div>
                             <div>
                                 <h4 className={'text-gray-500'}>Last Entry</h4>
-                                <h4>08:00</h4>
+                                <h4>{event.lastEntry}</h4>
                             </div>
                             <div>
                                 <h4 className={'text-gray-500'}>ID required</h4>
-                                <h4>Yes</h4>
+                                <h4>{(event.minAge && event.minAge >= 18)? 'Yes' : 'No'}</h4>
                             </div>
-                            <div className={'col-span-2'}>
-                                <h3 className={'text-gray-500'}>Additional Information</h3>
-                                <p>More Information</p>
-                            </div>
+                            {/*<div className={'col-span-2'}>*/}
+                            {/*    <h3 className={'text-gray-500'}>Additional Information</h3>*/}
+                            {/*    <p>More Information</p>*/}
+                            {/*</div>*/}
                         </div>
                         <div className={'mt-3'}>
                             <h2 className={'font-medium'}>Line up</h2>
@@ -70,7 +78,7 @@ export default function EventPage() {
 
             <section className={'bg-dark text-white px-16 py-16'}>
                 <div>
-                    <h1 className={'text-primary text-3xl'}>More like {event.name}</h1>
+                    <h1 className={'text-primary text-3xl'}>More like {event.eventName}</h1>
                     <div className={'grid grid-cols-4 gap-8'}>
                         {events.slice(0, 4).map((event, index) => <EventComponent key={index} event={event}/>)}
                     </div>

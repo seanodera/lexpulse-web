@@ -2,9 +2,10 @@
 import {Button, Carousel} from "antd";
 import {useEffect, useState} from "react";
 import {generateEvents} from "@/data/generator";
-import {extractImageColors, getColorPalette} from "@/data/utils";
-import {EventModel, Palette} from "@/data/types";
+
+import {EventModel} from "@/data/types";
 import {HeartOutlined} from "@ant-design/icons";
+import {extractImageColors, getColorPalette, Palette} from "@/data/palette";
 
 export default function ComedyBanner() {
     const [events, setEvents] = useState<EventModel[]>([]);
@@ -20,7 +21,7 @@ export default function ComedyBanner() {
                 <CarouselItem2
                     key={index}
                     image={event.poster}
-                    title={event.name}
+                    title={event.eventName}
                     to={'/comedy'}
                     cover={event.cover}
                     description={event.description}
