@@ -37,14 +37,14 @@ export default function EventComponent({event}: { event: EventModel }) {
             </div>
             <h3 className={'text-xl font-medium mt-2 mb-1 capitalize'}>{event.eventName}</h3>
             <div className={'flex justify-between items-center'}>
-                <div className={'px-2'}>
+                <div className={''}>
 
                     {/* Format date to "Sat, Aug 24, yyyy" */}
-                    <h4 className={'text-primary my-0'}>
+                    <h4 className={'text-primary font-medium my-0'}>
                         {format(new Date(event.eventDate), 'EEE, MMM dd, yyyy')}
                     </h4>
-                    <span className={'flex gap-2 text-opacity-20'}><HiOutlineLocationMarker/> <h4
-                        className={'text-gray-500'}>{event.location}</h4></span>
+                    <span className={'flex gap-2 text-opacity-20 mt-1'}><HiOutlineLocationMarker/> <h4
+                        className={'text-gray-500 text-wrap font-medium'}>{event.venue.name} - {event.venue.street},{event.venue.city}</h4></span>
                 </div>
                 <h4 className={'text-primary'}>{event.currency} {lowestPrice === 0? 'Free' : lowestPrice.toFixed(2)}</h4>
             </div>

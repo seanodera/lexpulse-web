@@ -26,7 +26,7 @@ export default function Header() {
 
     const isHomePage = pathName === '/';
     return (
-        <div className={`fixed w-full z-30 shadow-md ${isHomePage && windowHeight < 20? 'bg-transparent': 'bg-dark shadow-sm' }`}>
+        <div className={`fixed w-full z-30  ${isHomePage && windowHeight < 20? 'bg-transparent': 'bg-dark shadow-sm' }`}>
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link href="/">
                     <img src="/logo/logo.svg" alt="Logo" className="aspect-square h-8" />

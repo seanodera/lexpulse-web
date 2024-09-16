@@ -28,6 +28,10 @@ body{
 }
 
 
+.bg-upcoming-gradient {
+  background-image: conic-gradient(from 45deg at 55% 80%, #080714 0% 25%, #584cf4 25% 30%, transparent 30% 50%);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

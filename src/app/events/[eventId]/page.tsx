@@ -53,7 +53,7 @@ export default function EventPage() {
                             </div>
                             <div>
                                 <h4 className={'text-gray-500'}>ID required</h4>
-                                <h4>{(event.minAge && event.minAge >= 18)? 'Yes' : 'No'}</h4>
+                                <h4 className={'text-primary'}>{(event.minAge && event.minAge >= 18)? 'Yes' : 'No'}</h4>
                             </div>
                             {/*<div className={'col-span-2'}>*/}
                             {/*    <h3 className={'text-gray-500'}>Additional Information</h3>*/}

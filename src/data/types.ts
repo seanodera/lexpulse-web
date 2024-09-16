@@ -13,6 +13,34 @@ export enum EventType {
     Movie = "movie",
 }
 
+export enum VenueType {
+    ConcertHall = "Concert Hall",
+    Theater = "Theater",
+    Stadium = "Stadium",
+    ConferenceCenter = "Conference Center",
+    OutdoorPark = "Outdoor Park",
+    Nightclub = "Nightclub",
+    ArtGallery = "Art Gallery",
+    Museum = "Museum",
+    BanquetHall = "Banquet Hall",
+    ExhibitionCenter = "Exhibition Center",
+    HotelBallroom = "Hotel Ballroom",
+    SportsArena = "Sports Arena",
+    CivicCenter = "Civic Center",
+    Beach = "Beach",
+    Rooftop = "Rooftop",
+    CommunityCenter = "Community Center",
+    Amphitheater = "Amphitheater",
+    PrivateResidence = "Private Residence",
+    RestaurantBar = "Restaurant/Bar",
+    Garden = "Garden",
+    Warehouse = "Warehouse",
+    Arena = "Arena",
+    ShoppingMall = "Shopping Mall",
+    ConventionHall = "Convention Hall",
+    Cafe = "Café"
+}
+
 // Extract constant array for potential reuse and increased readability
 export const EventTypeList = [
     EventType.Clubbing,
@@ -28,11 +56,39 @@ export const EventTypeList = [
     EventType.Movie
 ];
 
+export const VenueTypeList = [
+    VenueType.ConcertHall,
+    VenueType.Theater,
+    VenueType.Stadium,
+    VenueType.ConferenceCenter,
+    VenueType.OutdoorPark,
+    VenueType.Nightclub,
+    VenueType.ArtGallery,
+    VenueType.Museum,
+    VenueType.BanquetHall,
+    VenueType.ExhibitionCenter,
+    VenueType.HotelBallroom,
+    VenueType.SportsArena,
+    VenueType.CivicCenter,
+    VenueType.Beach,
+    VenueType.Rooftop,
+    VenueType.CommunityCenter,
+    VenueType.Amphitheater,
+    VenueType.PrivateResidence,
+    VenueType.RestaurantBar,
+    VenueType.Garden,
+    VenueType.Warehouse,
+    VenueType.Arena,
+    VenueType.ShoppingMall,
+    VenueType.ConventionHall,
+    VenueType.Cafe
+]
+
 export interface EventModel {
     eventName: string;
     eventHostId: string;
     poster: string;
-    eventDate: Date | string; // Event date
+    eventDate: Date; // Event date
     location: string;
     // price: number;
     cover: string;
@@ -42,8 +98,8 @@ export interface EventModel {
     ticketInfo: Ticket[];
     discount?: Discount[];
     createdAt: Date;
-    startSalesDate?: Date | string; // Optional
-    endSalesDate?: Date | string; // Optional
+    startSalesDate?: Date; // Optional
+    endSalesDate?: Date; // Optional
     eventEnd?: string; // Optional
     minAge?: number; // Optional minimum age restriction
     dress?: string; // Optional dress code
@@ -69,8 +125,8 @@ export interface Ticket {
     ticketsAvailable: number;
     ticketsLeft: number;
     sold: number;
-    saleEnd?: Date | string; // Optional
-    saleStart?: Date | string; // Optional
+    saleEnd?: Date; // Optional
+    saleStart?: Date; // Optional
 }
 
 export interface Discount {
@@ -78,8 +134,8 @@ export interface Discount {
     ticketIds: string[];
     type: 'FlatRate' | 'Percentage';
     value: number;
-    start: Date | string;
-    end: Date | string;
+    start: Date;
+    end: Date;
 }
 
 export interface Venue {
@@ -93,7 +149,7 @@ export interface Venue {
     followers: number;
     cover: string;
     capacity: number;
-    type: string;
+    type: VenueType;
     yearEvents: number | 0;
     description?: string;
     phone: string;
@@ -108,4 +164,3 @@ export interface Purchase {
     purchaseDate: string;
     totalAmount: number;
 }
-

@@ -1,38 +1,34 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import store, {RootState} from "@/data/store";
-import {EventModel} from "@/data/types";
-import axios, {Axios} from "axios";
-import {state} from "sucrase/dist/types/parser/traverser/base";
-import {event} from "next/dist/build/output/log";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
+import { RootState } from "@/data/store";
+import { EventModel } from "@/data/types";
+
 const baseUrl = process.env.NEXT_PUBLIC_API_HOST_URL;
 
-
 interface eventsState {
-    fetchedEvents: EventModel[],
-    upcoming: EventModel[],
-    popular: EventModel[],
-    promoted: any[],
-    searchResults: EventModel[],
+    fetchedEvents: EventModel[];
+    upcoming: EventModel[];
+    popular: EventModel[];
+    promoted: EventModel[];
+    searchResults: EventModel[];
     category: {
-        featured: EventModel[],
-        grouped: [
-            {
-                name: string,
-                highlight: string,
-                subtitle: string,
-                data: EventModel[]
-            }
-        ]
-    },
-    focusEvent?: EventModel,
-    catLoading: boolean,
-    loading: boolean,
-    hasError: boolean,
-    errorMessage: string,
+        featured: EventModel[];
+        grouped: {
+            name: string;
+            highlight: string;
+            subtitle: string;
+            data: EventModel[];
+        }[];
+    };
+    focusEvent?: EventModel;
+    catLoading: boolean;
+    loading: boolean;
+    hasError: boolean;
+    errorMessage: string;
 }
 
-const initialState:eventsState = {
-    fetchedEvents:[],
+const initialState: eventsState = {
+    fetchedEvents: [],
     upcoming: [],
     popular: [],
     promoted: [],
@@ -41,9 +37,9 @@ const initialState:eventsState = {
         featured: [],
         grouped: [
             {
-                name: '',
-                highlight: '',
-                subtitle: '',
+                name: "",
+                highlight: "",
+                subtitle: "",
                 data: []
             }
         ]
@@ -52,111 +48,192 @@ const initialState:eventsState = {
     catLoading: false,
     loading: false,
     hasError: false,
-    errorMessage: '',
+    errorMessage: ""
 };
 
-
-export const fetchUpcoming = createAsyncThunk('events/fetchUpcoming', async () => {
-try {
-    console.log(baseUrl)
-    const response = await axios.get(`${baseUrl}/api/v1/events/upcoming?country=Ghana`)
-    console.log(response)
-    return response.data.data;
-} catch (err){
-    console.log(err)
-}
-})
-export const fetchPopular = createAsyncThunk('events/popular', async () => {
-
-})
-
-export const fetchPromoted = createAsyncThunk('events/fetchPromoted', async () => {
-
-})
-
-export const searchEvents = createAsyncThunk('events/search', async (searchTerms: string) => {
-
-})
-
-export const fetchCategory = createAsyncThunk('events/fetchCategory', async (category: string) => {
-
-    const data = {
-        featured: [],
-        grouped: [
-            {
-                name: '',
-                highlight: '',
-                subtitle: '',
-                data: []
-            }
-        ]
+export const fetchUpcoming = createAsyncThunk("events/fetchUpcoming", async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/api/v1/events/upcoming?country=Ghana`);
+        return response.data.data;
+    } catch (err) {
+        console.log(err);
+        throw new Error('Error fetching upcoming events');
     }
-})
-export const fetchEventById = createAsyncThunk('events/fetchById', async (id: string, { getState, dispatch }) => {
+});
+
+export const fetchPopular = createAsyncThunk("events/popular", async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/api/v1/events/popular?country=Ghana`);
+        return response.data.data;
+    } catch (e) {
+        console.log(e);
+        throw new Error('Error fetching popular events');
+    }
+});
+
+export const fetchPromoted = createAsyncThunk("events/fetchPromoted", async () => {
+    try {
+        const response = await axios.get(`${baseUrl}/api/v1/events/featured?country=Ghana`);
+        return response.data.data;
+    } catch (e) {
+        console.log(e);
+        throw new Error('Error fetching promoted events');
+    }
+});
+
+export const searchEvents = createAsyncThunk("events/search", async (searchTerms: string) => {
+    try {
+        const response = await axios.get(`${baseUrl}/api/v1/events/search?term=${searchTerms}`);
+        return response.data.data;
+    } catch (e) {
+        console.log(e);
+        throw new Error('Error searching events');
+    }
+});
+
+export const fetchCategory = createAsyncThunk("events/fetchCategory", async (category: string) => {
+    try {
+        const response = await axios.get(`${baseUrl}/api/v1/events/category?name=${category}`);
+        return response.data.data;
+    } catch (e) {
+        console.log(e);
+        throw new Error('Error fetching events category');
+    }
+});
+
+export const fetchEventById = createAsyncThunk("events/fetchById", async (id: string, { getState, dispatch }) => {
     try {
         const { events } = getState() as { events: eventsState };
-        console.log(events.fetchedEvents)
         let event = events.fetchedEvents.find((value) => value._id === id);
-
         if (!event) {
             const res = await axios.get(`${baseUrl}/api/v1/events/${id}`);
             event = res.data.data.event;
             dispatch(addEvent(event as EventModel));
         }
-
         return event;
     } catch (e) {
-        console.error('Error fetching event by id:', e);
-        throw new Error('Event fetching failed');
+        console.error("Error fetching event by id:", e);
+        throw new Error("Event fetching failed");
     }
 });
 
-const EventsSlice = createSlice({
+const eventsSlice = createSlice({
     name: "events",
     initialState,
     reducers: {
         addEvent: (state, action: PayloadAction<EventModel>) => {
-            state.fetchedEvents = [...state.fetchedEvents, action.payload];
+            state.fetchedEvents.push(action.payload);
         }
     },
-    extraReducers: builder => {
+    extraReducers: (builder) => {
         builder
             .addCase(fetchUpcoming.pending, (state) => {
                 state.loading = true;
                 state.hasError = false;
-                state.errorMessage = '';
+                state.errorMessage = "";
             })
             .addCase(fetchUpcoming.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
                 state.loading = false;
                 state.upcoming = action.payload;
-                console.log(action.payload)
-                state.fetchedEvents = [...state.fetchedEvents, ...action.payload]; // Avoid nested array
+                state.fetchedEvents = [...state.fetchedEvents, ...action.payload];
             })
-            .addCase(fetchUpcoming.rejected, (state,action) => {
+            .addCase(fetchUpcoming.rejected, (state, action) => {
                 state.loading = false;
                 state.hasError = true;
-                state.errorMessage = 'Error getting upcoming events';
+                state.errorMessage = action.error.message || "Failed to fetch upcoming events";
             })
-            .addCase(fetchEventById.pending, (state,action) => {
+            .addCase(fetchPopular.pending, (state) => {
+                state.loading = true;
+                state.hasError = false;
+                state.errorMessage = "";
+            })
+            .addCase(fetchPopular.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
+                state.loading = false;
+                state.popular = action.payload;
+                state.fetchedEvents = [...state.fetchedEvents, ...action.payload];
+            })
+            .addCase(fetchPopular.rejected, (state, action) => {
+                state.loading = false;
+                state.hasError = true;
+                state.errorMessage = action.error.message || "Failed to fetch popular events";
+            })
+            .addCase(fetchPromoted.pending, (state) => {
+                state.loading = true;
+                state.hasError = false;
+                state.errorMessage = "";
+            })
+            .addCase(fetchPromoted.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
+                state.loading = false;
+                state.promoted = action.payload;
+                state.fetchedEvents = [...state.fetchedEvents, ...action.payload];
+            })
+            .addCase(fetchPromoted.rejected, (state, action) => {
+                state.loading = false;
+                state.hasError = true;
+                state.errorMessage = action.error.message || "Failed to fetch promoted events";
+            })
+            .addCase(searchEvents.pending, (state) => {
+                state.loading = true;
+                state.hasError = false;
+                state.errorMessage = "";
+            })
+            .addCase(searchEvents.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
+                state.loading = false;
+                state.searchResults = action.payload;
+            })
+            .addCase(searchEvents.rejected, (state, action) => {
+                state.loading = false;
+                state.hasError = true;
+                state.errorMessage = action.error.message || "Failed to search events";
+            })
+            .addCase(fetchCategory.pending, (state) => {
                 state.catLoading = true;
                 state.hasError = false;
+                state.errorMessage = "";
             })
-            .addCase(fetchEventById.fulfilled, (state, action) => {
+            .addCase(fetchCategory.fulfilled, (state, action: PayloadAction<any>) => {
                 state.catLoading = false;
-                state.focusEvent = action.payload;
-                console.log(action.payload)
+                state.category = action.payload;
             })
-            .addCase(fetchEventById.rejected, (state) => {
+            .addCase(fetchCategory.rejected, (state, action) => {
                 state.catLoading = false;
                 state.hasError = true;
-                state.errorMessage = 'Event does not exist';
+                state.errorMessage = action.error.message || "Failed to fetch events category";
+            })
+            .addCase(fetchEventById.pending, (state) => {
+                state.loading = true;
+                state.hasError = false;
+                state.errorMessage = "";
+            })
+            .addCase(fetchEventById.fulfilled, (state, action: PayloadAction<EventModel | undefined>) => {
+                state.loading = false;
+                if (action.payload) {
+                    state.focusEvent = action.payload;
+                } else {
+                    state.hasError = true;
+                    state.errorMessage = "Event not found";
+                }
+            })
+            .addCase(fetchEventById.rejected, (state, action) => {
+                state.loading = false;
+                state.hasError = true;
+                state.errorMessage = action.error.message || "Failed to fetch event by ID";
             });
     }
 });
 
+export const { addEvent } = eventsSlice.actions;
 
-
-export const selectFocusEvent = (state: RootState) => state.events.focusEvent;
+export const selectFetchedEvents = (state: RootState) => state.events.fetchedEvents;
 export const selectUpcomingEvents = (state: RootState) => state.events.upcoming;
-export const {addEvent} = EventsSlice.actions;
-export default EventsSlice.reducer
+export const selectPopularEvents = (state: RootState) => state.events.popular;
+export const selectPromotedEvents = (state: RootState) => state.events.promoted;
+export const selectSearchResults = (state: RootState) => state.events.searchResults;
+export const selectCategoryEvents = (state: RootState) => state.events.category;
+export const selectFocusEvent = (state: RootState) => state.events.focusEvent;
+export const selectEventsLoading = (state: RootState) => state.events.loading;
+export const selectEventsCatLoading = (state: RootState) => state.events.catLoading;
+export const selectEventsError = (state: RootState) => state.events.hasError;
+export const selectEventsErrorMessage = (state: RootState) => state.events.errorMessage;
+
+export default eventsSlice.reducer;
