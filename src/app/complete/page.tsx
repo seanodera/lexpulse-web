@@ -7,7 +7,7 @@ import {common} from "@/data/utils";
 import {parseCookies} from "nookies";
 import {Button, Result} from "antd";
 import {CheckCircleOutlined, CloseCircleOutlined} from "@ant-design/icons";
-import {Ticket} from "@/data/types";
+import {Purchase} from "@/data/types";
 import Link from "next/link";
 
 
@@ -18,7 +18,7 @@ export default function CompletePage() {
     const searchParams = useSearchParams();
     const reference = searchParams.get('reference');
     const[ success,setSuccess] = useState<boolean>(false);
-    const [ticket, setTicket] = useState<Ticket>();
+    const [ticket, setTicket] = useState<Purchase>();
 
 
     const completeTransaction = async (reference: string) => {
@@ -34,7 +34,7 @@ export default function CompletePage() {
             if (response.data.success) {
                 // Do something if the transaction is successful
                 setSuccess(true);
-                setTicket(response.data.data as Ticket);
+                setTicket(response.data.data as Purchase);
             } else {
                 // Do something if the transaction is not successful
             }

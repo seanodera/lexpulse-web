@@ -162,17 +162,9 @@ export interface CartItem {
     price: number;
 }
 
+
+
 export interface Purchase {
-    id: string;
-    user: string;
-    eventName: string;
-    ticketQuantity: number;
-    purchaseDate: string;
-    totalAmount: number;
-}
-
-
-export interface Ticket {
     eventId: string;
     attendeeId: string;
     paymentMethod?: string;

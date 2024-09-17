@@ -1,6 +1,6 @@
 'use client'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CartItem, Purchase } from '@/data/types';
+import { CartItem } from '@/data/types';
 import { common, getCountry } from "@/data/utils";
 import axios from "axios";
 import { RootState } from "@/data/store";
@@ -25,7 +25,7 @@ const initialState: CartState = {
 
 export const fetchExchangeRates = createAsyncThunk(
     'confirmBooking/fetchExchangeRates',
-    async (_, { getState }) => {
+    async (_) => {
         try {
             const country = await getCountry();
             let fromCurrency = country?.currency || 'GHS';
@@ -52,7 +52,7 @@ export const fetchExchangeRates = createAsyncThunk(
 
 export const initiatePurchase = createAsyncThunk('cart/initPurchase', async (_, { getState }) => {
     const { cart, events, auth } = getState() as RootState;
-    const { items, totalPrice, totalTickets } = cart;
+    const { items, totalPrice} = cart;
 
     if (!events.focusEvent) {
         throw new Error('Internal Error occurred');
@@ -133,7 +133,7 @@ const cartSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchExchangeRates.fulfilled, (state, action) => {
+            .addCase(fetchExchangeRates.fulfilled, (state) => {
                 state.loading = false;
                 state.error = null;
                 // handle the fetched exchange rates if needed
@@ -146,7 +146,7 @@ const cartSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(initiatePurchase.fulfilled, (state, action) => {
+            .addCase(initiatePurchase.fulfilled, (state) => {
                 state.loading = false;
                 state.error = null;
                 // handle the purchase initiation result
