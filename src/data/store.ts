@@ -1,10 +1,14 @@
 import {configureStore} from "@reduxjs/toolkit";
 import EventsReducer from './slices/eventsSlice'
+import CartReducer from './slices/cartSlice';
+import AuthReducer from './slices/authSlice';
 
 const store = configureStore(
     {
         reducer: {
-            'events': EventsReducer,
+            events: EventsReducer,
+            cart: CartReducer,
+            auth: AuthReducer,
         },
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({

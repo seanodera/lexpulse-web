@@ -1,16 +1,18 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
-import { RootState } from "@/data/store";
-import { EventModel } from "@/data/types";
+import {RootState} from "@/data/store";
+import {EventModel} from "@/data/types";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_HOST_URL;
 
 interface eventsState {
+    country: string;
     fetchedEvents: EventModel[];
     upcoming: EventModel[];
     popular: EventModel[];
     promoted: EventModel[];
     searchResults: EventModel[];
+    recentlyViewed: EventModel[];
     category: {
         featured: EventModel[];
         grouped: {
@@ -28,11 +30,13 @@ interface eventsState {
 }
 
 const initialState: eventsState = {
+    country: 'Ghana',
     fetchedEvents: [],
     upcoming: [],
     popular: [],
     promoted: [],
     searchResults: [],
+    recentlyViewed: [],
     category: {
         featured: [],
         grouped: [
@@ -51,9 +55,10 @@ const initialState: eventsState = {
     errorMessage: ""
 };
 
-export const fetchUpcoming = createAsyncThunk("events/fetchUpcoming", async () => {
+export const fetchUpcoming = createAsyncThunk("events/fetchUpcoming", async (_,{getState}) => {
     try {
-        const response = await axios.get(`${baseUrl}/api/v1/events/upcoming?country=Ghana`);
+        const {events} = getState() as {events: eventsState};
+        const response = await axios.get(`${baseUrl}/api/v1/events/upcoming?country=${events.country}`);
         return response.data.data;
     } catch (err) {
         console.log(err);
@@ -61,9 +66,10 @@ export const fetchUpcoming = createAsyncThunk("events/fetchUpcoming", async () =
     }
 });
 
-export const fetchPopular = createAsyncThunk("events/popular", async () => {
+export const fetchPopular = createAsyncThunk("events/popular", async (_,{getState}) => {
     try {
-        const response = await axios.get(`${baseUrl}/api/v1/events/popular?country=Ghana`);
+        const {events} = getState() as {events: eventsState};
+        const response = await axios.get(`${baseUrl}/api/v1/events/popular?country=${events.country}`);
         return response.data.data;
     } catch (e) {
         console.log(e);
@@ -71,9 +77,10 @@ export const fetchPopular = createAsyncThunk("events/popular", async () => {
     }
 });
 
-export const fetchPromoted = createAsyncThunk("events/fetchPromoted", async () => {
+export const fetchPromoted = createAsyncThunk("events/fetchPromoted", async (_,{getState}) => {
     try {
-        const response = await axios.get(`${baseUrl}/api/v1/events/featured?country=Ghana`);
+        const {events} = getState() as {events: eventsState};
+        const response = await axios.get(`${baseUrl}/api/v1/events/featured?country=${events.country}`);
         return response.data.data;
     } catch (e) {
         console.log(e);
@@ -101,15 +108,29 @@ export const fetchCategory = createAsyncThunk("events/fetchCategory", async (cat
     }
 });
 
-export const fetchEventById = createAsyncThunk("events/fetchById", async (id: string, { getState, dispatch }) => {
+export const fetchEventById = createAsyncThunk("events/fetchById", async (id: string, {getState, dispatch}) => {
     try {
-        const { events } = getState() as { events: eventsState };
+        const {events} = getState() as { events: eventsState };
         let event = events.fetchedEvents.find((value) => value._id === id);
         if (!event) {
             const res = await axios.get(`${baseUrl}/api/v1/events/${id}`);
             event = res.data.data.event;
             dispatch(addEvent(event as EventModel));
+            if (!event) {
+                throw Error('Event not found')
+            }
         }
+
+        const _viewed = localStorage.getItem('viewed');
+
+        let viewed: string[] = _viewed ? JSON.parse(_viewed) : [];
+
+        if (!viewed.includes(event._id)) {
+            viewed.push(event._id);
+            localStorage.setItem('viewed', JSON.stringify(viewed));
+        }
+
+
         return event;
     } catch (e) {
         console.error("Error fetching event by id:", e);
@@ -205,10 +226,13 @@ const eventsSlice = createSlice({
                 state.hasError = false;
                 state.errorMessage = "";
             })
-            .addCase(fetchEventById.fulfilled, (state, action: PayloadAction<EventModel | undefined>) => {
+            .addCase(fetchEventById.fulfilled, (state, action: PayloadAction<EventModel>) => {
                 state.loading = false;
                 if (action.payload) {
                     state.focusEvent = action.payload;
+                    if (!state.recentlyViewed.find((v) => v._id === action.payload?._id)){
+                        state.recentlyViewed = [...state.recentlyViewed, action.payload];
+                    }
                 } else {
                     state.hasError = true;
                     state.errorMessage = "Event not found";
@@ -222,7 +246,7 @@ const eventsSlice = createSlice({
     }
 });
 
-export const { addEvent } = eventsSlice.actions;
+export const {addEvent} = eventsSlice.actions;
 
 export const selectFetchedEvents = (state: RootState) => state.events.fetchedEvents;
 export const selectUpcomingEvents = (state: RootState) => state.events.upcoming;

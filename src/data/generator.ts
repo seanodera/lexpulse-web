@@ -1,7 +1,7 @@
 
 // Function to generate fake events using Faker
 import {faker} from "@faker-js/faker";
-import {EventModel, EventType, Ticket, Venue} from "./types";
+import {EventModel, EventType, Ticket, Venue, VenueTypeList} from "./types";
 
 export function generateEvents(count: number): EventModel[] {
     const events: EventModel[] = [];
@@ -83,7 +83,7 @@ export function generateVenues(count: number, {id}: {id?: string}): Venue[] {
                 followers: faker.number.int({min: 2, max: 300}),
                 cover: faker.image.urlLoremFlickr({category: 'venue'}),
                 capacity: faker.number.int({min: 2, max: 400}),
-                type: faker.word.sample({strategy: 'fail'}),
+                type: VenueTypeList[faker.number.int({min:0 , max: VenueTypeList.length - 1})],
                 yearEvents: faker.number.int(40),
                 phone: faker.phone.number(),
                 email: faker.internet.email({}),

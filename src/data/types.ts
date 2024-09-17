@@ -1,4 +1,3 @@
-
 export enum EventType {
     Clubbing = "clubbing",
     Comedy = "comedy",
@@ -156,6 +155,13 @@ export interface Venue {
     email: string;
 }
 
+export interface CartItem {
+    id: string;
+    name: string;
+    amount: number;
+    price: number;
+}
+
 export interface Purchase {
     id: string;
     user: string;
@@ -163,4 +169,18 @@ export interface Purchase {
     ticketQuantity: number;
     purchaseDate: string;
     totalAmount: number;
+}
+
+
+export interface Ticket {
+    eventId: string;
+    attendeeId: string;
+    paymentMethod?: string;
+    ticketInfo: { ticketType: string, numberOfTickets: number}[ ];
+    totalPrice?: number;
+    amountPaid?: number;
+    status?: string;
+    paymentId?: string;
+    createdAt: Date;
+    _id: string;
 }
