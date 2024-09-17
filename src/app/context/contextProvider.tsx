@@ -6,6 +6,7 @@ import {usePathname} from "next/navigation";
 import {fetchPopular, fetchPromoted, fetchUpcoming} from "@/data/slices/eventsSlice";
 import {useAppDispatch} from "@/hooks/hooks";
 import {checkUser} from "@/data/slices/authSlice";
+import {fetchExchangeRates} from "@/data/slices/cartSlice";
 
 
 export default function ContextProvider({children}: { children: React.ReactNode }) {
@@ -16,6 +17,7 @@ export default function ContextProvider({children}: { children: React.ReactNode 
         dispatch(fetchPopular());
         dispatch(fetchPromoted());
         dispatch(checkUser());
+        dispatch(fetchExchangeRates());
         console.log('Fetching')
     }, [])
     return <div>

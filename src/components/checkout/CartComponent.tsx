@@ -1,13 +1,20 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/data/store";
-import { fetchExchangeRates, initiatePurchase,addToCart, removeFromCart } from "@/data/slices/cartSlice";
+import {
+    fetchExchangeRates,
+    initiatePurchase,
+    addToCart,
+    removeFromCart,
+    selectExchangeRates
+} from "@/data/slices/cartSlice";
 import { Button } from "antd";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { format } from "date-fns";
 import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
 import {selectFocusEvent} from "@/data/slices/eventsSlice";
 import {useRouter} from "next/navigation";
+import {event} from "next/dist/build/output/log";
 
 
 
@@ -17,9 +24,7 @@ export function CartComponent() {
     const event = useAppSelector(selectFocusEvent)
     const { items, totalPrice, totalTickets, loading, error } = cart;
 
-    useEffect(() => {
-        dispatch(fetchExchangeRates());
-    }, [dispatch]);
+
 
     const handleAddToCart = () => {
         // Add an example item to the cart
@@ -44,8 +49,19 @@ export function CartComponent() {
             console.error("Failed to initiate purchase:", err);
         }
     };
+
+    const exchangeRates = useAppSelector(selectExchangeRates);
+
+
     if (!event){
         return <div>No event</div>
+    }
+
+    function convertPrice(amount: number) {
+        if (event && event.currency !== exchangeRates.currency){
+        const convertedPrice = amount * exchangeRates.rates[event.currency] * 0.035;
+        return `${convertedPrice.toFixed(2)}`;
+        } else return amount;
     }
     return (
         <div>
@@ -63,19 +79,24 @@ export function CartComponent() {
                 </div>
                 <div>
                     {items.map(item => (
-                        <div key={item.id} className="flex justify-between bg-white bg-opacity-15 rounded-lg py-3 px-4">
-                            <h4 className="my-0">{item.amount} X {item.name}</h4>
-                            <h4 className="font-medium my-0">GHS {item.price}</h4>
-                            <Button type="link" onClick={() => handleRemoveFromCart(item.id)}>Remove</Button>
+                        <div key={item.id} className="flex justify-between items-center bg-white bg-opacity-15  py-3 px-4">
+                            <h4 className="">{item.amount} X {item.name}</h4>
+                            <h4 className="font-medium">GHS {item.price}</h4>
+                            <Button type="link" danger onClick={() => handleRemoveFromCart(item.id)}>Remove</Button>
                         </div>
                     ))}
-                    <div className="flex justify-between bg-white bg-opacity-15 rounded-lg py-3 px-4 mt-4">
+                    <div className="flex justify-between bg-white bg-opacity-15  py-3 px-4 mt-4">
                         <h4 className="my-0">Total:</h4>
                         <h4 className="font-medium my-0">{totalTickets} tickets</h4>
-                        <h4 className="font-medium my-0">GHS {totalPrice}</h4>
+                        <h4 className="font-medium my-0">{event.currency} {totalPrice}</h4>
                     </div>
+                    <div className={'p-4'}>
+                        <h3 className={'font-medium text-lg text-gray-200'}>Payment Amount</h3>
+                        <h4 className={'font-semibold text-lg'}>{exchangeRates.currency} {convertPrice(totalPrice)}</h4>
+                    </div>
+
                 </div>
-                <div className="px-4 py-4">
+                <div className="px-4 pb-4">
                     <Button type="primary" loading={loading} onClick={handleInitiatePurchase}>Confirm Purchase</Button>
                     {error && <p className="text-red-500 mt-2">{error}</p>}
                 </div>

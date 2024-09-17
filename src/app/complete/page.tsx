@@ -1,6 +1,6 @@
 'use client'; // Ensures that this file is treated as a client component
 
-import {useEffect, useState} from 'react';
+import {Suspense, useEffect, useState} from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import {common} from "@/data/utils";
@@ -11,10 +11,16 @@ import {Purchase} from "@/data/types";
 import Link from "next/link";
 
 
+export default function CompletePageWrapper () {
+
+    return <Suspense fallback={null}>
+        <CompletePage/>
+    </Suspense>
+}
 
 
 
-export default function CompletePage() {
+ function CompletePage() {
     const searchParams = useSearchParams();
     const reference = searchParams.get('reference');
     const[ success,setSuccess] = useState<boolean>(false);
@@ -36,7 +42,7 @@ export default function CompletePage() {
                 setSuccess(true);
                 setTicket(response.data.data as Purchase);
             } else {
-                // Do something if the transaction is not successful
+                setSuccess(false);
             }
 
             console.log('Transaction Completed:', response.data);

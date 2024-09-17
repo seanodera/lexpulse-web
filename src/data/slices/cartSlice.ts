@@ -13,6 +13,7 @@ interface CartState {
     totalTickets: number;
     loading: boolean;
     error: string | null;
+    exchangeRates: any;
 }
 
 const initialState: CartState = {
@@ -21,10 +22,11 @@ const initialState: CartState = {
     totalTickets: 0,
     loading: false,
     error: null,
+    exchangeRates: undefined,
 };
 
 export const fetchExchangeRates = createAsyncThunk(
-    'confirmBooking/fetchExchangeRates',
+    'cart/fetchExchangeRates',
     async (_) => {
         try {
             const country = await getCountry();
@@ -77,6 +79,7 @@ export const initiatePurchase = createAsyncThunk('cart/initPurchase', async (_, 
     console.log(body, cart,auth);
 
     try {
+
         const response = await axios.post(`${common.baseUrl}/api/v1/transactions/initiate`, body, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -133,9 +136,10 @@ const cartSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchExchangeRates.fulfilled, (state) => {
+            .addCase(fetchExchangeRates.fulfilled, (state,action) => {
                 state.loading = false;
                 state.error = null;
+                state.exchangeRates = action.payload;
                 // handle the fetched exchange rates if needed
             })
             .addCase(fetchExchangeRates.rejected, (state, action) => {
@@ -158,5 +162,7 @@ const cartSlice = createSlice({
     },
 });
 
+
+export const selectExchangeRates = (state:RootState) => state.cart.exchangeRates;
 export const { addToCart, removeFromCart, clearCart, setLoading, setError } = cartSlice.actions;
 export default cartSlice.reducer;
