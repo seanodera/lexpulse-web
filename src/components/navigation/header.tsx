@@ -5,6 +5,7 @@ import { CiSearch } from "react-icons/ci";
 import {Button} from "antd";
 import {usePathname} from "next/navigation";
 import {useEffect, useState} from "react";
+import ProfileDropdown from "@/components/navigation/profileDropown";
 
 export default function Header() {
     const [windowHeight, setWindowHeight] = useState(0);
@@ -48,11 +49,10 @@ export default function Header() {
                         Clubbing
                     </Link>
                 </div>
-                <div className="flex gap-2 items-center">
-                    <IconButton icon={<CiSearch />} type="primary" className="text-lg" />
-                    <Link href={'/login'}><Button type="primary">Login</Button></Link>
-                </div>
+                <ProfileDropdown/>
             </div>
         </div>
     );
 }
+
+

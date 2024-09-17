@@ -5,6 +5,7 @@ import Footer from "@/components/navigation/footer";
 import {usePathname} from "next/navigation";
 import {fetchPopular, fetchPromoted, fetchUpcoming} from "@/data/slices/eventsSlice";
 import {useAppDispatch} from "@/hooks/hooks";
+import {checkUser} from "@/data/slices/authSlice";
 
 
 export default function ContextProvider({children}: { children: React.ReactNode }) {
@@ -14,6 +15,7 @@ export default function ContextProvider({children}: { children: React.ReactNode 
         dispatch(fetchUpcoming());
         dispatch(fetchPopular());
         dispatch(fetchPromoted());
+        dispatch(checkUser());
         console.log('Fetching')
     }, [])
     return <div>
