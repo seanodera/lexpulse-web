@@ -29,22 +29,15 @@ export const fetchExchangeRates = createAsyncThunk(
     'cart/fetchExchangeRates',
     async (_) => {
         try {
-            const country = await getCountry();
-            let fromCurrency = country?.currency || 'GHS';
-            const ghsRatesUrl = 'https://open.er-api.com/v6/latest/GHS';
+            // const country = await getCountry();
+            let fromCurrency = 'GHS';
+            const ghsRatesUrl = `https://open.er-api.com/v6/latest/${fromCurrency}`;
 
             const response = await fetch(ghsRatesUrl);
             const data = await response.json();
 
-            if (fromCurrency === 'GHS') {
                 return { rates: data.rates, currency: data.base_code };
-            } else {
-                const conversionRate = data.rates[fromCurrency];
-                const convertedRates = Object.fromEntries(
-                    Object.entries(data.rates).map(([key, value ]) => [key, value as number / conversionRate])
-                );
-                return { rates: convertedRates, currency: 'GHS' };
-            }
+
         } catch (error: any) {
             console.error('Error fetching exchange rates:', error);
             throw new Error('Failed to fetch exchange rates');

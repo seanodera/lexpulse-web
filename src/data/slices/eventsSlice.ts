@@ -144,6 +144,10 @@ const eventsSlice = createSlice({
     reducers: {
         addEvent: (state, action: PayloadAction<EventModel>) => {
             state.fetchedEvents.push(action.payload);
+        },
+        changeRegion: (state, action) => {
+            state.country = action.payload;
+
         }
     },
     extraReducers: (builder) => {
@@ -246,8 +250,9 @@ const eventsSlice = createSlice({
     }
 });
 
-export const {addEvent} = eventsSlice.actions;
+export const {addEvent,changeRegion} = eventsSlice.actions;
 
+export const selectEventsCountry = (state:RootState) => state.events.country;
 export const selectFetchedEvents = (state: RootState) => state.events.fetchedEvents;
 export const selectUpcomingEvents = (state: RootState) => state.events.upcoming;
 export const selectPopularEvents = (state: RootState) => state.events.popular;

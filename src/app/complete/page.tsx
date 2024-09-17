@@ -36,11 +36,16 @@ export default function CompletePageWrapper () {
                     Authorization: `Bearer ${token}`,
                 },
             });
+            const raw = localStorage.getItem('viewed')
 
             if (response.data.success) {
                 // Do something if the transaction is successful
                 setSuccess(true);
                 setTicket(response.data.data as Purchase);
+                const viewed = raw ? JSON.parse(raw) : [];
+                await axios.post(`${common.baseUrl}/api/v1/events/views`, {events: viewed})
+               localStorage.removeItem('viewed');
+
             } else {
                 setSuccess(false);
             }

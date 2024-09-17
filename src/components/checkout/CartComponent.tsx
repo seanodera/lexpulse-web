@@ -26,15 +26,7 @@ export function CartComponent() {
 
 
 
-    const handleAddToCart = () => {
-        // Add an example item to the cart
-        dispatch(addToCart({
-            id: 'ticket-123',
-            name: 'VIP Ticket',
-            price: 100,
-            amount: 1,
-        }));
-    };
+
 
     const handleRemoveFromCart = (id: string) => {
         dispatch(removeFromCart(id));
@@ -43,7 +35,7 @@ export function CartComponent() {
     const handleInitiatePurchase = async () => {
         try {
             const authorizationUrl = await dispatch(initiatePurchase()).unwrap();
-            // Perform the redirect on the client
+
             router.push(authorizationUrl);
         } catch (err) {
             console.error("Failed to initiate purchase:", err);
@@ -59,7 +51,8 @@ export function CartComponent() {
 
     function convertPrice(amount: number) {
         if (event && event.currency !== exchangeRates.currency){
-        const convertedPrice = amount * exchangeRates.rates[event.currency] * 0.035;
+            console.log(exchangeRates)
+        const convertedPrice = amount * 1.035 / exchangeRates.rates[event.currency] ;
         return `${convertedPrice.toFixed(2)}`;
         } else return amount;
     }
@@ -67,7 +60,7 @@ export function CartComponent() {
         <div>
             <div className="flex justify-between items-center mt-4">
                 <h1 className="font-medium my-0">Cart</h1>
-                <Button type="primary" ghost onClick={handleAddToCart}>Add Item</Button>
+
             </div>
             <div className="bg-dark text-white rounded-lg ">
                 <div className="px-4 pt-4">
