@@ -74,7 +74,7 @@ export function CartComponent() {
                     {items.map(item => (
                         <div key={item.id} className="flex justify-between items-center bg-white bg-opacity-15  py-3 px-4">
                             <h4 className="">{item.amount} X {item.name}</h4>
-                            <h4 className="font-medium">GHS {item.price}</h4>
+                            <h4 className="font-medium">{event.currency} {item.price}</h4>
                             <Button type="link" danger onClick={() => handleRemoveFromCart(item.id)}>Remove</Button>
                         </div>
                     ))}

@@ -24,7 +24,7 @@ export default function EventComponent({event}: { event: EventModel }) {
 
 
     return (
-        <Link href={`events/${event._id}`} className={'rounded-lg bg-white bg-opacity-5 backdrop-blur-md'}>
+        <Link href={`/events/${event._id}`} className={'rounded-lg bg-white bg-opacity-5 backdrop-blur-md'}>
             <div className={'relative flex justify-end'}>
                 <img src={event.poster} className={'aspect-square w-full object-cover rounded-lg'} alt={event.eventName}/>
                 <Button

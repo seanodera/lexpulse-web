@@ -19,8 +19,8 @@ export default function CountrySelector() {
 
 
         }}>
-        <option value={'GH'}>{countries[ 'GH' ].emoji}</option>
-        <option value={'KE'}>{countries[ 'KE' ].emoji}</option>
+        <option className={'text-xl'} value={'GH'}>{countries[ 'GH' ].emoji}</option>
+        <option className={'text-xl'} value={'KE'}>{countries[ 'KE' ].emoji}</option>
 
     </Select>;
 }

@@ -49,7 +49,7 @@ export function TicketPurchase({event}: { event: EventModel }) {
                 <tr className={`py-2 ${currentIndex === index ? 'bg-primary text-white' : 'bg-white bg-opacity-10 text-white'}  hover:bg-white hover:text-dark transition-all ease-linear duration-150`}
                     key={index} onClick={() => setCurrentIndex(index)}>
                     <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.ticketType}</td>
-                    <td className={'py-3 px-3 rounded-e-lg text-end'}>GHS {ticket.price}</td>
+                    <td className={'py-3 px-3 rounded-e-lg text-end'}>{event.currency} {ticket.price}</td>
                 </tr>
             ))}</tbody>
         </table>
@@ -132,7 +132,7 @@ export function TicketPurchaseDialog({
                                 <tr className={`py-2 ${currentIndex === index ? 'bg-primary text-white' : 'bg-dark bg-opacity-85 text-white'} rounded-xl  hover:bg-white hover:text-dark transition-all ease-linear duration-150`}
                                     key={index} onClick={() => setCurrentIndex(index)}>
                                     <td className={'py-3 px-3 rounded-s-lg font-semibold'}>{ticket.ticketType}</td>
-                                    <td className={'py-3 px-3 rounded-e-lg text-end'}>GHS {ticket.price}</td>
+                                    <td className={'py-3 px-3 rounded-e-lg text-end'}>{event.currency} {ticket.price}</td>
                                 </tr>
                             ))}
                             </tbody>
@@ -147,7 +147,7 @@ export function TicketPurchaseDialog({
                                     <h4>{cartItem.name}</h4>
                                     <div className={'flex justify-between w-full'}>
                                         <h4 className={'text-sm'}>Qty: {cartItem.amount}</h4>
-                                        <h4 className={'text-primary'}>GHS {cartItem.price.toFixed(2)}</h4>
+                                        <h4 className={'text-primary'}>{event.currency} {cartItem.price.toFixed(2)}</h4>
                                     </div>
                                 </div>
                                 <Button onClick={() => handleRemoveFromCart(cartItem.id)} size={'small'} type={'text'} danger

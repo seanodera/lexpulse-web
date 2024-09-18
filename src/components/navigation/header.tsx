@@ -1,14 +1,8 @@
 'use client'
 import Link from "next/link";
-import { FilledButton, IconButton } from "@/components/buttons";
-import { CiSearch } from "react-icons/ci";
-import {Button} from "antd";
 import {usePathname} from "next/navigation";
 import {useEffect, useState} from "react";
 import ProfileDropdown from "@/components/navigation/profileDropown";
-import {string} from "yup";
-import {countries} from "country-data";
-import {Select} from "@headlessui/react";
 import CountrySelector from "@/components/navigation/countrySelector";
 
 export default function Header() {
@@ -53,7 +47,7 @@ export default function Header() {
                         Clubbing
                     </Link>
                 </div>
-                <div className={'flex gap-1'}>
+                <div className={'flex items-center gap-3'}>
                     <ProfileDropdown/>
                     <CountrySelector/>
                 </div>
