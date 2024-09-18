@@ -24,10 +24,10 @@ export default function ContextProvider({children}: { children: React.ReactNode 
     const user = useAppSelector(selectCurrentUser);
     const loading = useAppSelector(selectEventsLoading);
     useEffect(() => {
+        dispatch(checkUser());
         dispatch(fetchUpcoming());
         dispatch(fetchPopular());
         dispatch(fetchPromoted());
-        dispatch(checkUser());
         dispatch(fetchExchangeRates());
 
         console.log('Fetching')

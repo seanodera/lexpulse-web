@@ -1,9 +1,10 @@
 import {CombinedTicket} from "@/data/types";
 import {formatDate} from "date-fns";
+import Link from "next/link";
 
 export default function TicketComponent({ ticket }: { ticket: CombinedTicket }) {
     return (
-        <div className={''}>
+        <Link href={`/tickets/${ticket._id}`} className={''}>
             <img
                 src={ticket.eventId.poster}
                 alt={ticket.eventId.eventName}
@@ -27,6 +28,6 @@ export default function TicketComponent({ ticket }: { ticket: CombinedTicket }) 
                     </h3>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

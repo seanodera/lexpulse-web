@@ -3,15 +3,20 @@ import axios from "axios";
 import { common } from "@/data/utils";
 import { RootState } from "@/data/store";
 import {CombinedTicket} from "@/data/types";
+import {state} from "sucrase/dist/types/parser/traverser/base";
+import {string} from "yup";
 
 interface TicketsState {
     tickets: CombinedTicket[],
+    focusTicket: CombinedTicket | undefined,
     ticketsLoading: boolean,
     ticketsError: string | undefined,
+
 }
 
 const initialState: TicketsState = {
     tickets: [],
+    focusTicket: undefined,
     ticketsLoading: false,
     ticketsError: undefined,
 }
@@ -42,6 +47,26 @@ export const fetchTickets = createAsyncThunk('tickets/fetchTickets', async (_, {
     }
 });
 
+export const setFocusTicket = createAsyncThunk('tickets/focus', async (id:string, {getState,rejectWithValue}) => {
+    const state = getState() as  RootState;
+    const token = state.auth.token;
+    let focusTicket = state.tickets.tickets.find(ticket => ticket._id === id);
+    if (!focusTicket) {
+        const response = await axios.get(`${common.baseUrl}/api/v1/tickets/${id}`,{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.status === 200) {
+            focusTicket = response.data.data;
+        } else {
+            console.error('Error fetching focus ticket', response.data.message);
+            return rejectWithValue(response.data.message);
+        }
+    }
+    return focusTicket;
+})
+
 const ticketsSlice = createSlice({
     name: 'tickets',
     initialState,
@@ -59,10 +84,20 @@ const ticketsSlice = createSlice({
             .addCase(fetchTickets.rejected, (state, action: PayloadAction<any>) => {
                 state.ticketsLoading = false;
                 state.ticketsError = action.payload as string;
-            });
+            })
+            .addCase(setFocusTicket.pending, (state) => {
+                state.ticketsLoading;
+            }).addCase(setFocusTicket.fulfilled,(state,action) => {
+                state.ticketsLoading = false;
+                state.focusTicket = action.payload;
+        }).addCase(setFocusTicket.rejected, (state,action) => {
+            state.ticketsLoading = false;
+            state.ticketsError = action.payload as string;
+        })
     },
 });
 
+export const selectFocusTicket =(state: RootState) => state.tickets.focusTicket;
 export const selectTickets = (state: RootState) => state.tickets.tickets;
 
 export default ticketsSlice.reducer;

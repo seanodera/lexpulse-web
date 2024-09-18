@@ -32,6 +32,36 @@ body{
   background-image: conic-gradient(from 45deg at 55% 80%, #080714 0% 25%, #584cf4 25% 30%, transparent 30% 50%);
 }
 
+
+
+/* ListTicketComponent.module.css */
+.ticket-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.ticket-container::before, .ticket-container::after {
+    content: '';
+    position: absolute;
+    width: 50px; /* Size of the cut-out */
+    height: 50px; /* Size of the cut-out */
+    background-color: white;
+}
+
+.ticket-container::before {
+    top: -25px; /* Move pseudo-element up */
+    right: -25px; /* Move pseudo-element to the right */
+    border-radius: 0 50px 0 0; /* Top-right cut-out */
+}
+
+.ticket-container::after {
+    bottom: -25px; /* Move pseudo-element down */
+    right: -25px; /* Move pseudo-element to the right */
+    border-radius: 0 0 0 50px; /* Bottom-right cut-out */
+}
+
+
+
 .loader-circle {
   aspect-ratio: 1;
   display: grid;
