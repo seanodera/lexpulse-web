@@ -138,8 +138,12 @@ const authSlice = createSlice({
         },
         checkUser(state){
             const cookies = parseCookies(); // Read the cookies
-            state.token = cookies.token;
-            state.user = JSON.parse(cookies.user);
+            if (cookies.user && cookies.token) {
+                state.user = JSON.parse(cookies.user);
+                state.token = cookies.token;
+
+            }
+
 
         }
     },
