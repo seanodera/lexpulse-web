@@ -2,6 +2,7 @@ import {configureStore} from "@reduxjs/toolkit";
 import EventsReducer from './slices/eventsSlice'
 import CartReducer from './slices/cartSlice';
 import AuthReducer from './slices/authSlice';
+import TicketsReducer from './slices/ticketsSlice';
 
 const store = configureStore(
     {
@@ -9,6 +10,7 @@ const store = configureStore(
             events: EventsReducer,
             cart: CartReducer,
             auth: AuthReducer,
+            tickets: TicketsReducer,
         },
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({

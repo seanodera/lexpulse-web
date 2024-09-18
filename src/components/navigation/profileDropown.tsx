@@ -6,6 +6,8 @@ import {logout, selectCurrentUser} from "@/data/slices/authSlice";
 import {IconButton} from "@/components/buttons";
 import {CiSearch} from "react-icons/ci";
 import Link from "next/link";
+import {HiOutlineTicket} from "react-icons/hi2";
+import {router} from "next/client";
 
 
 const ProfileDropdown = () => {
@@ -30,11 +32,19 @@ const ProfileDropdown = () => {
                 },
                 {
                     key: 2,
+                    icon: <HiOutlineTicket/>,
+                    label: 'Your Tickets',
+                    onClick: () => {
+                        router.push('/tickets');
+                    }
+                },
+                {
+                    key: 3,
                     icon: <SettingOutlined/>,
                     label: 'Settings'
                 },
                 {
-                    key: 3,
+                    key: 4,
                     icon: <LogoutOutlined/>,
                     label: ' Logout',
                     onClick: () => {

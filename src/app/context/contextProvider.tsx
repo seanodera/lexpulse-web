@@ -5,22 +5,32 @@ import Footer from "@/components/navigation/footer";
 import {usePathname} from "next/navigation";
 import {fetchPopular, fetchPromoted, fetchUpcoming, selectEventsCountry} from "@/data/slices/eventsSlice";
 import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
-import {checkUser} from "@/data/slices/authSlice";
+import {checkUser, selectCurrentUser} from "@/data/slices/authSlice";
 import {fetchExchangeRates} from "@/data/slices/cartSlice";
+import {fetchTickets} from "@/data/slices/ticketsSlice";
 
 
 export default function ContextProvider({children}: { children: React.ReactNode }) {
     const pathname = usePathname();
     const dispatch = useAppDispatch();
-    const country = useAppSelector(selectEventsCountry)
+    const country = useAppSelector(selectEventsCountry);
+    const user = useAppSelector(selectCurrentUser);
     useEffect(() => {
         dispatch(fetchUpcoming());
         dispatch(fetchPopular());
         dispatch(fetchPromoted());
         dispatch(checkUser());
         dispatch(fetchExchangeRates());
+
         console.log('Fetching')
     }, [country]);
+
+    useEffect(() => {
+        if (user){
+            dispatch(fetchTickets());
+        }
+    }, [dispatch, user]);
+
     return <div>
         {pathname !== '/login' && <Header/>}
         <div className={`${pathname !== '/' && pathname !== '/login' && 'pt-[4.5rem]'}`}>

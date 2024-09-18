@@ -1,3 +1,6 @@
+import store from "@/data/store";
+
+
 export enum EventType {
     Clubbing = "clubbing",
     Comedy = "comedy",
@@ -175,4 +178,22 @@ export interface Purchase {
     paymentId?: string;
     createdAt: Date;
     _id: string;
+}
+
+
+
+export interface CombinedTicket {
+    _id: string;
+    eventId: EventModel;
+    attendeeId: string;
+    paymentMethod: string;
+    ticketInfo: {
+        _id: string;
+        ticketType: string;
+        numberOfTickets: number;
+    }[];
+    totalPrice: number;
+    status: string;
+    createdAt: string;
+    amountPaid: number;
 }
