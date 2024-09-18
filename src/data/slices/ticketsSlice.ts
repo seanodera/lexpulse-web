@@ -25,9 +25,14 @@ export const fetchTickets = createAsyncThunk('tickets/fetchTickets', async (_, {
                 Authorization: `Bearer ${token}`,
             },
         });
+        const response2 = await axios.get(`${common.baseUrl}/api/v1/tickets/user/${auth.user.id}/booked`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         console.log(response);
-        if (response.status === 200) {
-            return response.data.data;
+        if (response.status === 200 && response2.status === 200) {
+            return [...response.data.data, ...response2.data.data];
         }
 
         return rejectWithValue('Failed to fetch tickets');
