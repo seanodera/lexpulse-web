@@ -38,7 +38,7 @@ export function TicketPurchase({event}: { event: EventModel }) {
     };
     return <div className={'flex flex-col'}>
         <h3 className={'text-primary font-semibold'}>Tickets</h3>
-        <table className={'w-full border-separate border-spacing-y-2 '}>
+        <table className={'w-full '}>
             <thead>
             <tr>
                 <td className={'font-medium text-gray-500'}>Ticket Including lexpulse fees</td>
