@@ -25,7 +25,7 @@ export const fetchTickets = createAsyncThunk('tickets/fetchTickets', async (_, {
     try {
         const {auth} = getState() as RootState;
         const token = auth.token;
-        const response = await axios.get(`${common.baseUrl}/api/v1/tickets/user/${auth.user.id}/CONFIRMED`, {
+        const response = await axios.get(`${common.baseUrl}/api/v1/tickets/user/${auth.user.id}/Scanned`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
