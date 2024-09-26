@@ -7,7 +7,7 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 
 
-export default function EventComponent({event}: { event: EventModel }) {
+export default function EventComponent({className = '',event}: {className?: string, event: EventModel }) {
 
         const [lowestPrice, setLowestPrice] = useState(0);
 
@@ -24,7 +24,7 @@ export default function EventComponent({event}: { event: EventModel }) {
 
 
     return (
-        <Link href={`/events/${event._id}`} className={'rounded-lg bg-white bg-opacity-5 backdrop-blur-md'}>
+        <Link href={`/events/${event._id}`} className={`rounded-lg bg-white bg-opacity-10 backdrop-blur-sm ${className}`}>
             <div className={'relative flex justify-end'}>
                 <img src={event.poster} className={'aspect-square w-full object-cover rounded-lg'} alt={event.eventName}/>
                 <Button
@@ -35,7 +35,7 @@ export default function EventComponent({event}: { event: EventModel }) {
                     shape={'circle'}
                 />
             </div>
-            <h3 className={'text-xl font-medium mt-2 mb-1 capitalize'}>{event.eventName}</h3>
+            <h3 className={'text-xl font-medium mt-2 mb-1 capitalize mix-blend-difference'}>{event.eventName}</h3>
             <div className={'flex justify-between items-center'}>
                 <div className={''}>
 

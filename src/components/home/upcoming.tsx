@@ -12,7 +12,7 @@ export default function HomeUpcoming() {
             <Button type={'primary'} ghost>See More</Button>
         </div>
         <div className={'grid grid-cols-4 mt-4 gap-8'}>
-            {events.map((value, index) => <EventComponent key={index} event={value} />)}
+            {events.map((value, index) => <EventComponent key={index} event={value} className={`${index === 4 && 'text-white'}`} />)}
         </div>
 
     </section>

@@ -72,7 +72,7 @@ export const signUpHost = createAsyncThunk<any, { firstName: string; lastName: s
             formData.append('country', country?.name || '');
             formData.append('gender', 'Unset');
             formData.append('password', password);
-            formData.append('userType', 'host');
+            formData.append('userType', 'user');
             // formData.append('image', image, 'profile.jpg');
 
             const config = { headers: { 'Content-Type': 'multipart/form-data' } };
