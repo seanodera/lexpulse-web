@@ -2,6 +2,7 @@ import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 import {RootState} from "@/data/store";
 import {EventModel} from "@/data/types";
+import {id} from "date-fns/locale";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_HOST_URL;
 
@@ -55,9 +56,9 @@ const initialState: eventsState = {
     errorMessage: ""
 };
 
-export const fetchUpcoming = createAsyncThunk("events/fetchUpcoming", async (_,{getState}) => {
+export const fetchUpcoming = createAsyncThunk("events/fetchUpcoming", async (_, {getState}) => {
     try {
-        const {events} = getState() as {events: eventsState};
+        const {events} = getState() as { events: eventsState };
         const response = await axios.get(`${baseUrl}/api/v1/events/upcoming?country=${events.country}`);
         return response.data.data;
     } catch (err) {
@@ -66,9 +67,9 @@ export const fetchUpcoming = createAsyncThunk("events/fetchUpcoming", async (_,{
     }
 });
 
-export const fetchPopular = createAsyncThunk("events/popular", async (_,{getState}) => {
+export const fetchPopular = createAsyncThunk("events/popular", async (_, {getState}) => {
     try {
-        const {events} = getState() as {events: eventsState};
+        const {events} = getState() as { events: eventsState };
         const response = await axios.get(`${baseUrl}/api/v1/events/popular?country=${events.country}`);
         return response.data.data;
     } catch (e) {
@@ -77,9 +78,9 @@ export const fetchPopular = createAsyncThunk("events/popular", async (_,{getStat
     }
 });
 
-export const fetchPromoted = createAsyncThunk("events/fetchPromoted", async (_,{getState}) => {
+export const fetchPromoted = createAsyncThunk("events/fetchPromoted", async (_, {getState}) => {
     try {
-        const {events} = getState() as {events: eventsState};
+        const {events} = getState() as { events: eventsState };
         const response = await axios.get(`${baseUrl}/api/v1/events/featured?country=${events.country}`);
         return response.data.data;
     } catch (e) {
@@ -88,9 +89,49 @@ export const fetchPromoted = createAsyncThunk("events/fetchPromoted", async (_,{
     }
 });
 
-export const searchEvents = createAsyncThunk("events/search", async (searchTerms: string) => {
+
+export const searchEvents = createAsyncThunk("events/search", async (searchParams: {
+    searchTerms?: string;
+    eventTypes?: string[];
+    venueTypes?: string[];
+    countries?: string[];
+    cities?: string[];
+    districts?: string[];
+    dressCodes?: string[];
+    dateRange?: [Date, Date] | null;
+    minAge?: number | null;
+    priceRange?: [number, number];
+}) => {
+    const {
+        searchTerms,
+        eventTypes,
+        venueTypes,
+        countries,
+        cities,
+        districts,
+        dressCodes,
+        dateRange,
+        minAge,
+        priceRange
+    } = searchParams;
+
+
+    const filters = [];
+    if (searchTerms) filters.push(`term=${searchTerms}`);
+    if (eventTypes?.length) filters.push(`eventTypes=${eventTypes.join(',')}`);
+    if (venueTypes?.length) filters.push(`venueTypes=${venueTypes.join(',')}`);
+    if (countries?.length) filters.push(`countries=${countries.join(',')}`);
+    if (cities?.length) filters.push(`cities=${cities.join(',')}`);
+    if (districts?.length) filters.push(`districts=${districts.join(',')}`);
+    if (dressCodes?.length) filters.push(`dressCodes=${dressCodes.join(',')}`);
+    if (dateRange) filters.push(`startDate=${dateRange[ 0 ].toISOString()}&endDate=${dateRange[ 1 ].toISOString()}`);
+    if (minAge !== null) filters.push(`minAge=${minAge}`);
+    if (priceRange) filters.push(`minPrice=${priceRange[ 0 ]}&maxPrice=${priceRange[ 1 ]}`);
+
+    const queryString = filters.length ? `&${filters.join('&')}` : '';
+
     try {
-        const response = await axios.get(`${baseUrl}/api/v1/events/search?term=${searchTerms}`);
+        const response = await axios.get(`${baseUrl}/api/v1/events/search?${queryString}`);
         return response.data.data;
     } catch (e) {
         console.log(e);
@@ -138,6 +179,12 @@ export const fetchEventById = createAsyncThunk("events/fetchById", async (id: st
     }
 });
 
+function avoidDupe(fetchedEvents: EventModel[], newEvents: EventModel[]) {
+    const ids = fetchedEvents.map(e => e._id);
+    const filtered = newEvents.filter(e => !ids.includes(e._id));
+    return [...fetchedEvents, ...filtered];
+}
+
 const eventsSlice = createSlice({
     name: "events",
     initialState,
@@ -160,7 +207,7 @@ const eventsSlice = createSlice({
             .addCase(fetchUpcoming.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
                 state.loading = false;
                 state.upcoming = action.payload;
-                state.fetchedEvents = [...state.fetchedEvents, ...action.payload];
+                state.fetchedEvents = avoidDupe(state.fetchedEvents, action.payload);
             })
             .addCase(fetchUpcoming.rejected, (state, action) => {
                 state.loading = false;
@@ -175,7 +222,7 @@ const eventsSlice = createSlice({
             .addCase(fetchPopular.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
                 state.loading = false;
                 state.popular = action.payload;
-                state.fetchedEvents = [...state.fetchedEvents, ...action.payload];
+                state.fetchedEvents = avoidDupe(state.fetchedEvents, action.payload);
             })
             .addCase(fetchPopular.rejected, (state, action) => {
                 state.loading = false;
@@ -190,7 +237,7 @@ const eventsSlice = createSlice({
             .addCase(fetchPromoted.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
                 state.loading = false;
                 state.promoted = action.payload;
-                state.fetchedEvents = [...state.fetchedEvents, ...action.payload];
+                state.fetchedEvents = avoidDupe(state.fetchedEvents, action.payload);
             })
             .addCase(fetchPromoted.rejected, (state, action) => {
                 state.loading = false;
@@ -205,6 +252,7 @@ const eventsSlice = createSlice({
             .addCase(searchEvents.fulfilled, (state, action: PayloadAction<EventModel[]>) => {
                 state.loading = false;
                 state.searchResults = action.payload;
+                state.fetchedEvents = avoidDupe(state.fetchedEvents, action.payload)
             })
             .addCase(searchEvents.rejected, (state, action) => {
                 state.loading = false;
@@ -234,7 +282,7 @@ const eventsSlice = createSlice({
                 state.loading = false;
                 if (action.payload) {
                     state.focusEvent = action.payload;
-                    if (!state.recentlyViewed.find((v) => v._id === action.payload?._id)){
+                    if (!state.recentlyViewed.find((v) => v._id === action.payload?._id)) {
                         state.recentlyViewed = [...state.recentlyViewed, action.payload];
                     }
                 } else {
@@ -250,9 +298,9 @@ const eventsSlice = createSlice({
     }
 });
 
-export const {addEvent,changeRegion} = eventsSlice.actions;
+export const {addEvent, changeRegion} = eventsSlice.actions;
 
-export const selectEventsCountry = (state:RootState) => state.events.country;
+export const selectEventsCountry = (state: RootState) => state.events.country;
 export const selectFetchedEvents = (state: RootState) => state.events.fetchedEvents;
 export const selectUpcomingEvents = (state: RootState) => state.events.upcoming;
 export const selectPopularEvents = (state: RootState) => state.events.popular;
