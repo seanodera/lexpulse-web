@@ -40,7 +40,7 @@ export default function TicketsPage() {
             </div>
             <div className={'py-8'}>
                 <h2 className={'font-semibold px-16'}>Past Tickets</h2>
-                <div>
+                <div className={'grids grids-cols-5 gap-8'}>
 
                     {pastTickets.map((ticket, index) => (
                         <TicketComponent key={index} ticket={ticket}/>
