@@ -34,18 +34,18 @@ export default function Header() {
                     <Link href="/events" className="block active:text-primary hover:text-primary text-gray-500">
                         Events
                     </Link>
-                    <Link href="/comedy" className="block active:text-primary hover:text-primary text-gray-500">
-                        Comedy
-                    </Link>
-                    <Link href="/concerts" className="block active:text-primary hover:text-primary text-gray-500">
-                        Concerts
-                    </Link>
-                    <Link href="/festivals" className="block active:text-primary hover:text-primary text-gray-500">
-                        Festivals
-                    </Link>
-                    <Link href="/clubbing" className="block active:text-primary hover:text-primary text-gray-500">
-                        Clubbing
-                    </Link>
+                    {/*<Link href="/comedy" className="block active:text-primary hover:text-primary text-gray-500">*/}
+                    {/*    Comedy*/}
+                    {/*</Link>*/}
+                    {/*<Link href="/concerts" className="block active:text-primary hover:text-primary text-gray-500">*/}
+                    {/*    Concerts*/}
+                    {/*</Link>*/}
+                    {/*<Link href="/festivals" className="block active:text-primary hover:text-primary text-gray-500">*/}
+                    {/*    Festivals*/}
+                    {/*</Link>*/}
+                    {/*<Link href="/clubbing" className="block active:text-primary hover:text-primary text-gray-500">*/}
+                    {/*    Clubbing*/}
+                    {/*</Link>*/}
                 </div>
                 <div className={'flex items-center gap-3'}>
                     <ProfileDropdown/>

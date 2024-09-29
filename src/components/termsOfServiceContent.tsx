@@ -14,7 +14,7 @@ export default function TermsOfServiceContent() {
                 <Card className="bg-white p-8 shadow-md rounded">
                   <Typography>
                     <Text className="text-gray-500 mb-5 block">
-                      Last Updated Jan, 2024
+                      Last Updated Sept, 2024
                     </Text>
 
                     <Title level={2}>Acceptance of Terms</Title>
