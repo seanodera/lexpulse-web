@@ -2,14 +2,9 @@ import React from 'react';
 import TermsOfServiceContent from "@/components/termsOfServiceContent";
 
 
-const TermsOfService = () => {
+export default function TermsOfService() {
     return (
-        <>
-
-            <TermsOfServiceContent />
-
-        </>
+        <TermsOfServiceContent/>
     )
 }
 
-export default TermsOfService;
