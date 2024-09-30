@@ -1,78 +1,118 @@
 'use client'
-import {Button, Calendar, Select, DatePicker, InputNumber, Slider, message} from "antd";
+import { Button, Calendar, Select, DatePicker, InputNumber, Slider, message } from "antd";
 import EventComponent from "@/components/eventComponent";
-import {useEffect, useState} from "react";
-import {EventModel, EventTypeList, Ticket, VenueTypeList} from "@/data/types";
-import {generateEvents} from "@/data/generator";
-import {isAfter, isBefore, parseISO} from 'date-fns';
-import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
-import {searchEvents, selectEventsLoading, selectFetchedEvents} from "@/data/slices/eventsSlice";
+import { Suspense, useEffect, useState, useMemo } from "react";
+import { EventModel, EventTypeList, VenueTypeList } from "@/data/types";
+import {endOfDay, isAfter, isBefore, parseISO, startOfDay,} from 'date-fns';
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { searchEvents, selectEventsLoading, selectFetchedEvents } from "@/data/slices/eventsSlice";
+import { useSearchParams } from "next/navigation";
+import dayjs, {Dayjs} from "dayjs";
 
-const {Option} = Select;
-const {RangePicker} = DatePicker;
+const { Option } = Select;
+const { RangePicker } = DatePicker;
 
-export default function EventsPage() {
+export default function EventsPageWrapper() {
+    return (
+        <Suspense fallback={null}>
+            <EventsPage />
+        </Suspense>
+    );
+}
+
+function EventsPage() {
     const dispatch = useAppDispatch();
-    const events  = useAppSelector(selectFetchedEvents);
-    const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>([]);
-    const [selectedVenueTypes, setSelectedVenueTypes] = useState<string[]>([]);
-    const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-    const [selectedCities, setSelectedCities] = useState<string[]>([]);
-    const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
-    const [selectedDressCodes, setSelectedDressCodes] = useState<string[]>([]);
-    const [selectedDates, setSelectedDates] = useState<any | null>(null);
-    const [minAge, setMinAge] = useState<number | null>(null);
-    const [selectedPriceRange, setSelectedPriceRange] = useState<[number, number]>([0, 100]);
+    const events = useAppSelector(selectFetchedEvents);
+    const isLoading = useAppSelector(selectEventsLoading);
+    const searchParams = useSearchParams();
 
-    // Fetch event data when the component mounts
+    const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>(searchParams.get('eventTypes')?.split(',') || []);
+    const [selectedVenueTypes, setSelectedVenueTypes] = useState<string[]>(searchParams.get('venueTypes')?.split(',') || []);
+    const [selectedCountries, setSelectedCountries] = useState<string[]>(searchParams.get('countries')?.split(',') || []);
+    const [selectedCities, setSelectedCities] = useState<string[]>(searchParams.get('cities')?.split(',') || []);
+    const [selectedDistricts, setSelectedDistricts] = useState<string[]>(searchParams.get('districts')?.split(',') || []);
+    const [selectedDressCodes, setSelectedDressCodes] = useState<string[]>(searchParams.get('dressCodes')?.split(',') || []);
+    const [selectedDates, setSelectedDates] = useState<Date[] | null>(searchParams.get('dateRange') ? (searchParams.get('dateRange') as string).split(',').map((date) => {
+        console.log(new Date(date));
+        return new Date(date);
+    }) : null);
+    const [minAge, setMinAge] = useState<number | null>(searchParams.get('minAge') ? parseInt(searchParams.get('minAge') as string, 0) : null);
+    const [selectedPriceRange, setSelectedPriceRange] = useState<[number, number]>(
+        searchParams.get('priceRange') ? searchParams.get('priceRange')!.split(',').map(Number) as [number, number] : [0, 100]
+    );
+    const [displayEvents, setDisplayEvents] = useState<EventModel[]>([]);
+    const [hasRun, setHasRun] = useState<boolean>(false);
+    const [localLoading,setLocalLoading] = useState<boolean>(false);
+
+    const allTicketPrices: number[] = useMemo(
+        () => events.flatMap(event => event.ticketInfo).map(ticket => ticket.price),
+        [events]
+    );
+
+    const minPrice = useMemo(() => Math.min(...allTicketPrices), [allTicketPrices]);
+    const maxPrice = useMemo(() => Math.max(...allTicketPrices), [allTicketPrices]);
+    console.log((searchParams.get('dateRange') as string).split(',').map((date) => new Date(date)));
     useEffect(() => {
-        setDisplayEvents(events);
-        clearFilters()
-    }, []);
+        if (!events.length && !hasRun) {
+            dispatch(searchEvents({}));
+            setHasRun(true);
+            console.log('Running from events');
+        }
+    }, [dispatch, events.length, hasRun]);
+
+    useEffect(() => {
+        const filteredEvents = events.filter(event => {
+            const inSelectedEventTypes = !selectedEventTypes.length || selectedEventTypes.includes(event.category);
+            const inSelectedVenueTypes = !selectedVenueTypes.length || selectedVenueTypes.includes(event.venue.name);
+            const inSelectedCountries = !selectedCountries.length || selectedCountries.includes(event.venue.country);
+            const inSelectedCities = !selectedCities.length || selectedCities.includes(event.venue.city);
+            const inSelectedDistricts = !selectedDistricts.length || selectedDistricts.includes(event.venue.district);
+            const inSelectedDressCodes = event.dress ? !selectedDressCodes.length || selectedDressCodes.includes(event.dress) : true;
+            const aboveMinAge = minAge === null || (event.minAge !== undefined && event.minAge >= minAge);
+            const inSelectedDates = !selectedDates || (
+                isAfter(event.eventDate, startOfDay(new Date(selectedDates[0]))) &&
+                isBefore(event.eventDate, endOfDay(new Date(selectedDates[1])))
+            );
+            const inPriceRange = event.ticketInfo.some(ticket => ticket.price >= selectedPriceRange[0] && ticket.price <= selectedPriceRange[1]);
+
+            return inSelectedEventTypes &&
+                inSelectedVenueTypes &&
+                inSelectedCountries &&
+                inSelectedCities &&
+                inSelectedDistricts &&
+                inSelectedDressCodes &&
+                aboveMinAge &&
+                inSelectedDates &&
+                inPriceRange;
+        });
+
+        setDisplayEvents(filteredEvents);
+
+    }, [events, minAge, selectedCities, selectedCountries, selectedDates, selectedDistricts, selectedDressCodes, selectedEventTypes, selectedPriceRange, selectedVenueTypes]);
 
 
-    const allTicketPrices: number[] = events
-        .flatMap(event => event.ticketInfo)
-        .map(ticket => ticket.price);
+    useEffect(() => {
 
-    const minPrice = Math.min(...allTicketPrices);
-    const maxPrice = Math.max(...allTicketPrices);
-    console.log(events, minPrice, maxPrice);
-    const handleEventTypeChange = (value: string[]) => {
-        setSelectedEventTypes(value);
-    };
-
-    const handleVenueTypeChange = (value: string[]) => {
-        setSelectedVenueTypes(value);
-    };
-
-    const handleCountryChange = (value: string[]) => {
-        setSelectedCountries(value);
-    };
-
-    const handleCityChange = (value: string[]) => {
-        setSelectedCities(value);
-    };
-
-    const handleDistrictChange = (value: string[]) => {
-        setSelectedDistricts(value);
-    };
-
-    const handleDressCodeChange = (value: string[]) => {
-        setSelectedDressCodes(value);
-    };
-
-    const handleDateChange = (dates: any | null) => {
-        setSelectedDates(dates);
-    };
-
-    const handleMinAgeChange = (value: number | null) => {
-        setMinAge(value);
-    };
-
-    const handlePriceRangeChange = (value: number[]) => {
-        setSelectedPriceRange([value[0],value[1]]);
-    };
+        if (hasRun &&!localLoading && !isLoading && displayEvents.length === 0) {
+            console.log('Running from 2nd events', isLoading,localLoading, displayEvents.length, events.length);
+            setLocalLoading(true)
+            dispatch(searchEvents({
+                eventTypes: selectedEventTypes,
+                venueTypes: selectedVenueTypes,
+                countries: selectedCountries,
+                cities: selectedCities,
+                districts: selectedDistricts,
+                dressCodes: selectedDressCodes,
+                dateRange: selectedDates ? [new Date(selectedDates[0]), new Date(selectedDates[1])] : null,
+                minAge: minAge || 0,
+                priceRange: selectedPriceRange
+            })).then((result) => {
+                if (result.meta.requestStatus === 'fulfilled'){
+                    setLocalLoading(false);
+                }
+            });
+        }
+    }, [dispatch, displayEvents.length, events.length, hasRun, isLoading, localLoading, minAge, selectedCities, selectedCountries, selectedDates, selectedDistricts, selectedDressCodes, selectedEventTypes, selectedPriceRange, selectedVenueTypes]);
 
     const clearFilters = () => {
         setSelectedEventTypes([]);
@@ -85,55 +125,10 @@ export default function EventsPage() {
         setMinAge(null);
         setSelectedPriceRange([minPrice, maxPrice]);
     };
+    const handlePriceRangeChange = (value: number[]) => {
+        setSelectedPriceRange([value[0],value[1]]);
+    };
 
-const [displayEvents, setDisplayEvents] = useState<EventModel[]>([]);
-const [hasRun,setHasRun] = useState<boolean>(false);
-const isLoading = useAppSelector(selectEventsLoading)
-    useEffect(() => {
-        const filteredEvents = events.filter(event => {
-            const inSelectedEventTypes = !selectedEventTypes.length || selectedEventTypes.includes(event.category);
-            const inSelectedVenueTypes = !selectedVenueTypes.length || selectedVenueTypes.includes(event.venue.name);
-            const inSelectedCountries = !selectedCountries.length || selectedCountries.includes(event.venue.country);
-            const inSelectedCities = !selectedCities.length || selectedCities.includes(event.venue.city);
-            const inSelectedDistricts = !selectedDistricts.length || selectedDistricts.includes(event.venue.district);
-            const inSelectedDressCodes = event.dress? !selectedDressCodes.length || selectedDressCodes.includes(event.dress) : false;
-            const aboveMinAge = minAge === null || (event.minAge !== undefined && event.minAge >= minAge);
-            const inSelectedDates = !selectedDates || (isAfter(event.eventDate, new Date(selectedDates[ 0 ])) && isBefore(event.eventDate, new Date(selectedDates[ 1 ])));
-            const inPriceRange = event.ticketInfo .some(
-                ticket => ticket.price >= selectedPriceRange[0] && ticket.price <= selectedPriceRange[1]
-            );
-            return inSelectedEventTypes && inSelectedVenueTypes && inSelectedCountries && inSelectedCities && inSelectedDistricts && inSelectedDressCodes && aboveMinAge && inSelectedDates && inPriceRange;
-        });
-        setDisplayEvents(filteredEvents);
-        if (!isLoading) {
-            if (filteredEvents.length === 0 && events.length !== 0) {
-
-
-                    dispatch(searchEvents({
-                        eventTypes: selectedEventTypes,
-                        venueTypes: selectedVenueTypes,
-                        countries: selectedCountries,
-                        cities: selectedCities,
-                        districts: selectedDistricts,
-                        dressCodes: selectedDressCodes,
-                        dateRange: selectedDates ? [new Date(selectedDates[0]), new Date(selectedDates[1])] : null,
-                        minAge: minAge,
-                        priceRange: selectedPriceRange
-                    }))
-
-
-        } else if (events.length === 0){
-               if (!hasRun){
-                   dispatch(searchEvents({
-
-                   }))
-                   setHasRun(true)
-
-               }
-
-            }
-        }
-    }, [dispatch, events, minAge, selectedCities, selectedCountries, selectedDates, selectedDistricts, selectedDressCodes, selectedEventTypes, selectedPriceRange, selectedVenueTypes]);
     return <div className='px-16 py-8'>
         <h1>All Events</h1>
         <div className='grid grid-cols-5 gap-8'>
@@ -145,9 +140,8 @@ const isLoading = useAppSelector(selectEventsLoading)
                 <div >
                     <h3>Date Range</h3>
                     <RangePicker
-                        style={{width: '100%'}}
-                        onChange={handleDateChange}
-                        value={selectedDates}
+                        value={selectedDates ? [dayjs(selectedDates[0]), dayjs(selectedDates[1])] : null}
+                        onChange={(dates: any, dateStrings: [string, string]) => setSelectedDates(dates ? [dates[0].toDate(), dates[1].toDate()] : null)}
                     />
                 </div>
                 <div >
@@ -156,7 +150,7 @@ const isLoading = useAppSelector(selectEventsLoading)
                         mode="multiple"
                         style={{width: '100%'}}
                         placeholder="Select event type(s)"
-                        onChange={handleEventTypeChange}
+                        onChange={setSelectedEventTypes}
                         value={selectedEventTypes}
                     >
                         {EventTypeList.map(type => (
@@ -170,7 +164,7 @@ const isLoading = useAppSelector(selectEventsLoading)
                         mode="multiple"
                         style={{width: '100%'}}
                         placeholder="Select venue type(s)"
-                        onChange={handleVenueTypeChange}
+                        onChange={setSelectedEventTypes}
                         value={selectedVenueTypes}
                     >
                         {VenueTypeList.map(type => (
@@ -184,7 +178,7 @@ const isLoading = useAppSelector(selectEventsLoading)
                         mode="multiple"
                         style={{width: '100%'}}
                         placeholder="Select country(s)"
-                        onChange={handleCountryChange}
+                        onChange={setSelectedCountries}
                         value={selectedCountries}
                     >
                         {Array.from(new Set(events.map(event => event.venue.country))).map(country => (
@@ -198,7 +192,7 @@ const isLoading = useAppSelector(selectEventsLoading)
                         mode="multiple"
                         style={{width: '100%'}}
                         placeholder="Select city(s)"
-                        onChange={handleCityChange}
+                        onChange={setSelectedCities}
                         value={selectedCities}
                     >
                         {Array.from(new Set(events.map(event => event.venue.city))).map(city => (
@@ -212,7 +206,7 @@ const isLoading = useAppSelector(selectEventsLoading)
                         mode="multiple"
                         style={{width: '100%'}}
                         placeholder="Select district(s)"
-                        onChange={handleDistrictChange}
+                        onChange={setSelectedDistricts}
                         value={selectedDistricts}
                     >
                         {Array.from(new Set(events.map(event => event.venue.district))).map(district => (
@@ -226,7 +220,7 @@ const isLoading = useAppSelector(selectEventsLoading)
                         mode="multiple"
                         style={{width: '100%'}}
                         placeholder="Select dress code(s)"
-                        onChange={handleDressCodeChange}
+                        onChange={setSelectedDressCodes}
                         value={selectedDressCodes}
                     >
                         {Array.from(new Set(events.map(event => event.dress))).map(dressCode => (
@@ -240,7 +234,7 @@ const isLoading = useAppSelector(selectEventsLoading)
                         style={{width: '100%'}}
                         min={0}
                         placeholder="Enter minimum age"
-                        onChange={handleMinAgeChange}
+                        onChange={setMinAge}
                         value={minAge}
                     />
                 </div>

@@ -60,6 +60,11 @@ body{
     border-radius: 0 0 0 50px; /* Bottom-right cut-out */
 }
 
+.transparent-select .ant-select-selector {
+    background-color: transparent !important;
+    color: currentColor !important;
+    border: inherit !important;
+}
 
 
 .loader-circle {

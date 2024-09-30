@@ -21,7 +21,6 @@ const ProfileDropdown = () => {
             <Link href={'/login'}><Button type="primary">Login</Button></Link>
         </div>
     }
-
     return (
         <Dropdown menu={{
             items: [

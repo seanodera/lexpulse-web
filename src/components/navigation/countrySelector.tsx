@@ -1,26 +1,33 @@
-import {useEffect, useState} from "react";
-import {string} from "yup";
-import {usePathname} from "next/navigation";
 import {countries} from "country-data";
-import {Select} from "@headlessui/react";
+import {Select} from "antd";
 import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
-import {changeRegion, fetchPopular, selectEventsCountry} from "@/data/slices/eventsSlice";
+import {changeRegion, selectEventsCountry} from "@/data/slices/eventsSlice";
 
+const { Option } = Select;
 
 export default function CountrySelector() {
     const selectedCountry = useAppSelector(selectEventsCountry);
     const dispatch = useAppDispatch();
 
-    return <Select
-        value={countries.all.find((value) => value.name.toLowerCase() === selectedCountry.toLowerCase())?.alpha2}
-        className={'border-0 bg-transparent p-0 mx-1'}
-        onChange={(e) => {
-            dispatch(changeRegion(countries[ e.target.value ].name));
+    const handleChange = (value: string) => {
+        dispatch(changeRegion(countries[value].name));
+    };
 
+    // Get the initially selected country
+    const initialCountry = countries.all.find((value) => value.name.toLowerCase() === selectedCountry.toLowerCase())?.alpha2;
 
-        }}>
-        <option className={'text-xl'} value={'GH'}>{countries[ 'GH' ].emoji}</option>
-        <option className={'text-xl'} value={'KE'}>{countries[ 'KE' ].emoji}</option>
-
-    </Select>;
+    return (
+        <Select
+            defaultValue={initialCountry}
+            className='border-0 bg-transparent p-0 mx-1 text-white'
+            onChange={handleChange}
+        >
+            <Option value='GH'>
+                {countries['GH'].emoji} {countries['GH'].name}
+            </Option>
+            <Option value='KE'>
+                {countries['KE'].emoji} {countries['KE'].name}
+            </Option>
+        </Select>
+    );
 }

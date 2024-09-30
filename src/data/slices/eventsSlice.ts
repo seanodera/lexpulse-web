@@ -98,7 +98,7 @@ export const searchEvents = createAsyncThunk("events/search", async (searchParam
     cities?: string[];
     districts?: string[];
     dressCodes?: string[];
-    dateRange?: [Date, Date] | null;
+    dateRange?: [Date, Date]|Date[] | null;
     minAge?: number | null;
     priceRange?: [number, number];
 }) => {
