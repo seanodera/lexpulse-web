@@ -83,9 +83,13 @@ export function CartComponent() {
                         <h4 className="font-medium my-0">{totalTickets} tickets</h4>
                         <h4 className="font-medium my-0">{event.currency} {totalPrice}</h4>
                     </div>
+                    {/*<div className={'p-4'}>*/}
+                    {/*    <h3 className={'font-medium text-lg text-gray-200'}>Payment Amount</h3>*/}
+                    {/*    <h4 className={'font-semibold text-lg'}>{exchangeRates.currency} {convertPrice(totalPrice)}</h4>*/}
+                    {/*</div>*/}
                     <div className={'p-4'}>
                         <h3 className={'font-medium text-lg text-gray-200'}>Payment Amount</h3>
-                        <h4 className={'font-semibold text-lg'}>{exchangeRates.currency} {convertPrice(totalPrice)}</h4>
+                        <h4 className={'font-semibold text-lg'}>{event.currency} {totalPrice}</h4>
                     </div>
 
                 </div>
