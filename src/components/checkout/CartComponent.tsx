@@ -35,7 +35,7 @@ export function CartComponent() {
     const handleInitiatePurchase = async () => {
         try {
             const authorizationUrl = await dispatch(initiatePurchase()).unwrap();
-
+            console.log(authorizationUrl);
             router.push(authorizationUrl);
         } catch (err) {
             console.error("Failed to initiate purchase:", err);

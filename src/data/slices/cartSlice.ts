@@ -81,7 +81,7 @@ export const initiatePurchase = createAsyncThunk('cart/initPurchase', async (_, 
 
         console.log('Transaction Hold Initiated:', response.data);
 
-        return response.data.data.data.authorization_url;
+        return response.data.data.authorizationUrl;
     } catch (error: any) {
         console.error('Error Initiating Transaction Hold:', error.response ? error.response.data : error.message);
         throw new Error('Failed to initiate transaction');
