@@ -45,7 +45,7 @@ export const fetchExchangeRates = createAsyncThunk(
     }
 );
 
-export const initiatePurchase = createAsyncThunk('cart/initPurchase', async (_, { getState }) => {
+export const initiatePurchase = createAsyncThunk('cart/initPurchase', async (method:string, { getState }) => {
     const { cart, events, auth } = getState() as RootState;
     const { items, totalPrice} = cart;
 
@@ -62,7 +62,7 @@ export const initiatePurchase = createAsyncThunk('cart/initPurchase', async (_, 
         amount: totalPrice,
         eventId: events.focusEvent._id,
         attendeeId: auth.user.id,
-        paymentMethod: 'credit_card',
+        paymentMethod: method,
         ticketInfo: items.map(value => ({
             ticketType: value.name,
             numberOfTickets: value.amount,

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/data/store";
 import {
@@ -8,7 +8,7 @@ import {
     removeFromCart,
     selectExchangeRates
 } from "@/data/slices/cartSlice";
-import { Button } from "antd";
+import {Button, Modal, Select} from "antd";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { format } from "date-fns";
 import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
@@ -18,30 +18,57 @@ import {event} from "next/dist/build/output/log";
 
 
 
-export function CartComponent() {
+export function ChoosePaymentMethod({show,setShow}: {show: boolean, setShow: (value: boolean) => void}) {
     const dispatch = useAppDispatch();
     const cart = useAppSelector((state: RootState) => state.cart);
     const event = useAppSelector(selectFocusEvent)
-    const { items, totalPrice, totalTickets, loading, error } = cart;
-
-
-
-
-
-    const handleRemoveFromCart = (id: string) => {
-        dispatch(removeFromCart(id));
-    };
     const router = useRouter();
-    const handleInitiatePurchase = async () => {
+    const { items, totalPrice, totalTickets, loading, error } = cart;
+    const exchangeRates = useAppSelector(selectExchangeRates);
+    function convertPrice(amount: number) {
+        if (event && event.currency !== exchangeRates.currency){
+            console.log(exchangeRates)
+            const convertedPrice = amount * 1.035 / exchangeRates.rates[event.currency] ;
+            return `${convertedPrice.toFixed(2)}`;
+        } else return amount;
+    }
+    const handleInitiatePurchase = async (method:string) => {
         try {
-            const authorizationUrl = await dispatch(initiatePurchase()).unwrap();
+            const authorizationUrl = await dispatch(initiatePurchase(method)).unwrap();
             console.log(authorizationUrl);
             router.push(authorizationUrl);
         } catch (err) {
             console.error("Failed to initiate purchase:", err);
         }
     };
+    return <Modal open={show} title={'Choose Payments'} onCancel={() => setShow(false)} closable={true} onClose={() => setShow(false)} footer={null}>
+        <div className={'grid grid-cols-2 gap-4 py-5'}>
+            <div className={''}>
+                <h3 className={'font-medium text-lg text-gray-800'}>Card Payment Amount</h3>
+                <h4 className={'font-semibold text-lg'}>{exchangeRates.currency} {convertPrice(totalPrice)}</h4>
+            </div>
+            <div className={''}>
+                <h3 className={'font-medium text-lg text-gray-800'}>Mobile Payment Amount</h3>
+                <h4 className={'font-semibold text-lg'}>{event?.currency} {totalPrice}</h4>
+            </div>
+        </div>
+        <div className={'grid grid-cols-2 gap-4'}>
+            <Button type={'primary'} size={'large'} loading={loading} onClick={() => handleInitiatePurchase('credit_card')}>Card Payment</Button>
+            <Button type={'primary'} size={'large'} ghost loading={loading} onClick={() => handleInitiatePurchase('mobile_money')}>Mobile Money</Button>
+        </div>
+    </Modal>
+}
 
+export function CartComponent() {
+    const dispatch = useAppDispatch();
+    const cart = useAppSelector((state: RootState) => state.cart);
+    const event = useAppSelector(selectFocusEvent)
+    const { items, totalPrice, totalTickets, loading, error } = cart;
+    const handleRemoveFromCart = (id: string) => {
+        dispatch(removeFromCart(id));
+    };
+    const router = useRouter();
+    const [show,setShow] = useState(false);
     const exchangeRates = useAppSelector(selectExchangeRates);
 
 
@@ -58,6 +85,7 @@ export function CartComponent() {
     }
     return (
         <div>
+            <ChoosePaymentMethod show={show} setShow={(value) => setShow(value)}/>
             <div className="flex justify-between items-center mt-4">
                 <h1 className="font-medium my-0">Cart</h1>
 
@@ -83,10 +111,7 @@ export function CartComponent() {
                         <h4 className="font-medium my-0">{totalTickets} tickets</h4>
                         <h4 className="font-medium my-0">{event.currency} {totalPrice}</h4>
                     </div>
-                    {/*<div className={'p-4'}>*/}
-                    {/*    <h3 className={'font-medium text-lg text-gray-200'}>Payment Amount</h3>*/}
-                    {/*    <h4 className={'font-semibold text-lg'}>{exchangeRates.currency} {convertPrice(totalPrice)}</h4>*/}
-                    {/*</div>*/}
+
                     <div className={'p-4'}>
                         <h3 className={'font-medium text-lg text-gray-200'}>Payment Amount</h3>
                         <h4 className={'font-semibold text-lg'}>{event.currency} {totalPrice}</h4>
@@ -94,7 +119,7 @@ export function CartComponent() {
 
                 </div>
                 <div className="px-4 pb-4">
-                    <Button type="primary" loading={loading} onClick={handleInitiatePurchase}>Confirm Purchase</Button>
+                    <Button type="primary" loading={loading} onClick={() => setShow(true)}>Confirm Purchase</Button>
                     {error && <p className="text-red-500 mt-2">{error}</p>}
                 </div>
             </div>
