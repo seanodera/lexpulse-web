@@ -1,5 +1,5 @@
 'use client'
-import { Button, Calendar, Select, DatePicker, InputNumber, Slider, message } from "antd";
+import {Button, Calendar, Select, DatePicker, InputNumber, Slider, message, Drawer} from "antd";
 import EventComponent from "@/components/eventComponent";
 import { Suspense, useEffect, useState, useMemo } from "react";
 import { EventModel, EventTypeList, VenueTypeList } from "@/data/types";
@@ -25,7 +25,7 @@ function EventsPage() {
     const events = useAppSelector(selectFetchedEvents);
     const isLoading = useAppSelector(selectEventsLoading);
     const searchParams = useSearchParams();
-
+    const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>(searchParams.get('eventTypes')?.split(',') || []);
     const [selectedVenueTypes, setSelectedVenueTypes] = useState<string[]>(searchParams.get('venueTypes')?.split(',') || []);
     const [selectedCountries, setSelectedCountries] = useState<string[]>(searchParams.get('countries')?.split(',') || []);
@@ -51,7 +51,6 @@ function EventsPage() {
 
     const minPrice = useMemo(() => Math.min(...allTicketPrices), [allTicketPrices]);
     const maxPrice = useMemo(() => Math.max(...allTicketPrices), [allTicketPrices]);
-    console.log((searchParams.get('dateRange') as string).split(',').map((date) => new Date(date)));
     useEffect(() => {
         if (!events.length && !hasRun) {
             dispatch(searchEvents({}));
@@ -129,132 +128,159 @@ function EventsPage() {
         setSelectedPriceRange([value[0],value[1]]);
     };
 
-    return <div className='px-16 py-8'>
-        <h1>All Events</h1>
-        <div className='grid grid-cols-5 gap-8'>
-            <div className={'space-y-4'}>
+    const renderFilters = () => {
+        return <div className={'space-y-4'}>
+
+            <div>
+                <h3>Date Range</h3>
+                <RangePicker
+                    value={selectedDates ? [dayjs(selectedDates[ 0 ]), dayjs(selectedDates[ 1 ])] : null}
+                    onChange={(dates: any, dateStrings: [string, string]) => setSelectedDates(dates ? [dates[ 0 ].toDate(), dates[ 1 ].toDate()] : null)}
+                />
+            </div>
+            <div>
+                <h3>Event Type</h3>
+                <Select
+                    mode="multiple"
+                    style={{width: '100%'}}
+                    placeholder="Select event type(s)"
+                    onChange={setSelectedEventTypes}
+                    value={selectedEventTypes}
+                >
+                    {EventTypeList.map(type => (
+                        <Option key={type} value={type}>{type}</Option>
+                    ))}
+                </Select>
+            </div>
+            <div>
+                <h3>Venue Type</h3>
+                <Select
+                    mode="multiple"
+                    style={{width: '100%'}}
+                    placeholder="Select venue type(s)"
+                    onChange={setSelectedEventTypes}
+                    value={selectedVenueTypes}
+                >
+                    {VenueTypeList.map(type => (
+                        <Option key={type} value={type}>{type}</Option>
+                    ))}
+                </Select>
+            </div>
+            <div>
+                <h3>Country</h3>
+                <Select
+                    mode="multiple"
+                    style={{width: '100%'}}
+                    placeholder="Select country(s)"
+                    onChange={setSelectedCountries}
+                    value={selectedCountries}
+                >
+                    {Array.from(new Set(events.map(event => event.venue.country))).map(country => (
+                        <Option key={country} value={country}>{country}</Option>
+                    ))}
+                </Select>
+            </div>
+            <div>
+                <h3>City</h3>
+                <Select
+                    mode="multiple"
+                    style={{width: '100%'}}
+                    placeholder="Select city(s)"
+                    onChange={setSelectedCities}
+                    value={selectedCities}
+                >
+                    {Array.from(new Set(events.map(event => event.venue.city))).map(city => (
+                        <Option key={city} value={city}>{city}</Option>
+                    ))}
+                </Select>
+            </div>
+            <div>
+                <h3>District</h3>
+                <Select
+                    mode="multiple"
+                    style={{width: '100%'}}
+                    placeholder="Select district(s)"
+                    onChange={setSelectedDistricts}
+                    value={selectedDistricts}
+                >
+                    {Array.from(new Set(events.map(event => event.venue.district))).map(district => (
+                        <Option key={district} value={district}>{district}</Option>
+                    ))}
+                </Select>
+            </div>
+            <div>
+                <h3>Dress Code</h3>
+                <Select
+                    mode="multiple"
+                    style={{width: '100%'}}
+                    placeholder="Select dress code(s)"
+                    onChange={setSelectedDressCodes}
+                    value={selectedDressCodes}
+                >
+                    {Array.from(new Set(events.map(event => event.dress))).map(dressCode => (
+                        <Option key={dressCode} value={dressCode}>{dressCode}</Option>
+                    ))}
+                </Select>
+            </div>
+            <div>
+                <h3>Minimum Age</h3>
+                <InputNumber
+                    style={{width: '100%'}}
+                    min={0}
+                    placeholder="Enter minimum age"
+                    onChange={setMinAge}
+                    value={minAge}
+                />
+            </div>
+            <div>
+                <h3>Price Range</h3>
+                <Slider
+                    range
+                    min={minPrice}
+                    max={maxPrice}
+                    step={10}
+                    defaultValue={[minPrice, maxPrice]}
+                    onChange={handlePriceRangeChange}
+                    value={selectedPriceRange}
+                />
+            </div>
+
+        </div>
+    }
+    const showDrawer = () => {
+        setIsDrawerVisible(true);
+    };
+
+    const closeDrawer = () => {
+        setIsDrawerVisible(false);
+    };
+
+    return <div className='py-8 px-4 md:px-16'>
+        <div className="flex justify-between">
+            <h1 className="text-center sm:text-left">Events</h1>
+            {/* Show filter button on mobile */}
+            <Button className="sm:hidden" type="primary" onClick={showDrawer}>Filters</Button>
+        </div>
+        <div className='grid grid-cols-1 md:grid-cols-5 gap-8'>
+            <div className={'hidden sm:block'}>
                 <div className='flex justify-between items-center'>
                     <h2>Filters</h2>
                     <Button type='text' className='text-gray-500' onClick={clearFilters}>Clear All</Button>
                 </div>
-                <div >
-                    <h3>Date Range</h3>
-                    <RangePicker
-                        value={selectedDates ? [dayjs(selectedDates[0]), dayjs(selectedDates[1])] : null}
-                        onChange={(dates: any, dateStrings: [string, string]) => setSelectedDates(dates ? [dates[0].toDate(), dates[1].toDate()] : null)}
-                    />
-                </div>
-                <div >
-                    <h3>Event Type</h3>
-                    <Select
-                        mode="multiple"
-                        style={{width: '100%'}}
-                        placeholder="Select event type(s)"
-                        onChange={setSelectedEventTypes}
-                        value={selectedEventTypes}
-                    >
-                        {EventTypeList.map(type => (
-                            <Option key={type} value={type}>{type}</Option>
-                        ))}
-                    </Select>
-                </div>
-                <div >
-                    <h3>Venue Type</h3>
-                    <Select
-                        mode="multiple"
-                        style={{width: '100%'}}
-                        placeholder="Select venue type(s)"
-                        onChange={setSelectedEventTypes}
-                        value={selectedVenueTypes}
-                    >
-                        {VenueTypeList.map(type => (
-                            <Option key={type} value={type}>{type}</Option>
-                        ))}
-                    </Select>
-                </div>
-                <div >
-                    <h3>Country</h3>
-                    <Select
-                        mode="multiple"
-                        style={{width: '100%'}}
-                        placeholder="Select country(s)"
-                        onChange={setSelectedCountries}
-                        value={selectedCountries}
-                    >
-                        {Array.from(new Set(events.map(event => event.venue.country))).map(country => (
-                            <Option key={country} value={country}>{country}</Option>
-                        ))}
-                    </Select>
-                </div>
-                <div >
-                    <h3>City</h3>
-                    <Select
-                        mode="multiple"
-                        style={{width: '100%'}}
-                        placeholder="Select city(s)"
-                        onChange={setSelectedCities}
-                        value={selectedCities}
-                    >
-                        {Array.from(new Set(events.map(event => event.venue.city))).map(city => (
-                            <Option key={city} value={city}>{city}</Option>
-                        ))}
-                    </Select>
-                </div>
-                <div >
-                    <h3>District</h3>
-                    <Select
-                        mode="multiple"
-                        style={{width: '100%'}}
-                        placeholder="Select district(s)"
-                        onChange={setSelectedDistricts}
-                        value={selectedDistricts}
-                    >
-                        {Array.from(new Set(events.map(event => event.venue.district))).map(district => (
-                            <Option key={district} value={district}>{district}</Option>
-                        ))}
-                    </Select>
-                </div>
-                <div >
-                    <h3>Dress Code</h3>
-                    <Select
-                        mode="multiple"
-                        style={{width: '100%'}}
-                        placeholder="Select dress code(s)"
-                        onChange={setSelectedDressCodes}
-                        value={selectedDressCodes}
-                    >
-                        {Array.from(new Set(events.map(event => event.dress))).map(dressCode => (
-                            <Option key={dressCode} value={dressCode}>{dressCode}</Option>
-                        ))}
-                    </Select>
-                </div>
-                <div >
-                    <h3>Minimum Age</h3>
-                    <InputNumber
-                        style={{width: '100%'}}
-                        min={0}
-                        placeholder="Enter minimum age"
-                        onChange={setMinAge}
-                        value={minAge}
-                    />
-                </div>
-                <div >
-                    <h3>Price Range</h3>
-                    <Slider
-                        range
-                        min={minPrice}
-                        max={maxPrice}
-                        step={10}
-                        defaultValue={[minPrice, maxPrice]}
-                        onChange={handlePriceRangeChange}
-                        value={selectedPriceRange}
-                    />
-                </div>
-
+                {renderFilters()}
             </div>
-            <div className='col-span-4 grid grid-cols-4 gap-8'>
+            <div className='md:col-span-4 grid grid-cols-2  md:grid-cols-4 gap-8'>
                 {displayEvents.map((value, index) => <EventComponent key={index} event={value}/>)}
             </div>
+            <Drawer title="Filters"
+                    placement="right"
+                    width={'80%'}
+                    closable={true}
+                    onClose={closeDrawer}
+                    extra={<Button type='text' className='text-gray-500' onClick={clearFilters}>Clear All</Button>}
+                    open={isDrawerVisible}>
+                {renderFilters()}
+            </Drawer>
         </div>
     </div>
 }

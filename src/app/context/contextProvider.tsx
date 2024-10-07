@@ -4,6 +4,7 @@ import Header from "@/components/navigation/header";
 import Footer from "@/components/navigation/footer";
 import {usePathname} from "next/navigation";
 import {
+    changeRegion,
     fetchPopular,
     fetchPromoted,
     fetchUpcoming,
@@ -15,6 +16,7 @@ import {checkUser, selectCurrentUser} from "@/data/slices/authSlice";
 import {fetchExchangeRates} from "@/data/slices/cartSlice";
 import {fetchTickets} from "@/data/slices/ticketsSlice";
 import LoadingScreen from "@/components/LoadingScreen";
+import {getCountry} from "@/data/utils";
 
 
 export default function ContextProvider({children}: { children: React.ReactNode }) {
@@ -23,6 +25,15 @@ export default function ContextProvider({children}: { children: React.ReactNode 
     const country = useAppSelector(selectEventsCountry);
     const user = useAppSelector(selectCurrentUser);
     const loading = useAppSelector(selectEventsLoading);
+
+    useEffect(() => {
+        getCountry().then((value) => {
+            if (value){
+                dispatch(changeRegion(value.name))
+            }
+        })
+    }, []);
+
     useEffect(() => {
         dispatch(checkUser());
         dispatch(fetchUpcoming());
@@ -32,6 +43,8 @@ export default function ContextProvider({children}: { children: React.ReactNode 
 
         console.log('Fetching')
     }, [country]);
+
+
 
     useEffect(() => {
         if (user) {

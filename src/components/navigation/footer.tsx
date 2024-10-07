@@ -2,14 +2,13 @@ import Link from "next/link";
 
 export default function Footer() {
     return (
-        <footer className={'px-16 bg-primary-950 text-white py-8'}>
-            <div className={'grid grid-cols-4'}>
+        <footer className={'px-4 md:px-16 bg-primary-950 text-white py-8'}>
+            <div className={'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8'}>
 
-                <div className={'flex gap-2'}>
-                    <img src={'/logo/logo.svg'} className={'aspect-square h-8'} alt="Lexpulse Logo"/>
+                <div className={'flex gap-2 items-center'}>
+                    <img src={'/logo/logo.svg'} className={'aspect-square h-8'} alt="Lexpulse Logo" />
                     <h2 className={'font-bold'}>LEXPULSE</h2>
                 </div>
-
 
                 <div>
                     <h3 className={'mt-4 font-medium'}>LEXPULSE</h3>
@@ -23,7 +22,6 @@ export default function Footer() {
                         <h4>Sell Tickets</h4>
                     </Link>
                 </div>
-
 
                 <div>
                     <h3 className={'mt-4 font-medium'}>Contact</h3>
@@ -43,7 +41,6 @@ export default function Footer() {
                         <h4>YouTube</h4>
                     </Link>
                 </div>
-
 
                 <div>
                     <h3 className={'mt-4 font-medium'}>Policies</h3>

@@ -21,17 +21,17 @@ export default function ContactForm() {
     }, []);
 
     return (
-        <Fieldset className="space-y-4">
+        <Fieldset className="space-y-4 p-4 sm:p-8">
             <Legend className="text-lg font-bold">User Details</Legend>
-            <div className="grid grid-cols-2 gap-8">
-                <Field>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
+                <Field className="w-full">
                     <Label className="block font-semibold">First Name</Label>
                     <Input className="block border border-gray-500 rounded-lg py-2 px-3 w-full"
                            value={userDetails?.firstName || ''}
                            readOnly
                     />
                 </Field>
-                <Field>
+                <Field className="w-full">
                     <Label className="block font-semibold">Last Name</Label>
                     <Input className="block border border-gray-500 rounded-lg py-2 px-3 w-full"
                            value={userDetails?.lastName || ''}
@@ -39,7 +39,7 @@ export default function ContactForm() {
                     />
                 </Field>
             </div>
-            <Field className="md:w-1/2 md:pe-4">
+            <Field className="w-full sm:w-1/2">
                 <Label className="block font-semibold">Email</Label>
                 <Input className="block border border-gray-500 rounded-lg py-2 px-3 w-full"
                        value={userDetails?.email || ''}
@@ -47,7 +47,7 @@ export default function ContactForm() {
                 />
                 <small className="font-light">Confirmation goes to this email</small>
             </Field>
-            <Field className="md:w-1/2 md:pe-4">
+            <Field className="w-full sm:w-1/2">
                 <Label className="block font-semibold">Country</Label>
                 <Select value={country} disabled className="block border border-gray-500 rounded-lg py-2 px-3 w-full">
                     {countries.all.map((country, index) => (
@@ -55,7 +55,7 @@ export default function ContactForm() {
                     ))}
                 </Select>
             </Field>
-            <Field className="md:w-1/2 md:pe-4">
+            <Field className="w-full sm:w-1/2">
                 <Label className="block font-semibold">Phone Number</Label>
                 <Input className="block border border-gray-500 rounded-lg py-2 px-3 w-full"
                        value={userDetails?.phone || ''}
