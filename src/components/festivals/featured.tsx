@@ -1,7 +1,7 @@
 'use client'
 import {useEffect, useState} from "react";
 import {EventModel} from "@/data/types";
-import {generateEvents} from "@/data/generator";
+// import {generateEvents} from "@/data/generator";
 import EventComponent from "@/components/eventComponent";
 import {Button} from "antd";
 
@@ -9,9 +9,9 @@ import {Button} from "antd";
 export function FestivalLineup() {
     const [events, setEvents] = useState<EventModel[]>([]);
 
-    useEffect(() => {
-        setEvents(generateEvents(3));
-    }, []);
+    // useEffect(() => {
+    //     setEvents(generateEvents(3));
+    // }, []);
 
     return (
         <div className={'px-16 py-16'}>
@@ -32,9 +32,9 @@ export function FestivalLineup() {
 export function FestivalAfterParties() {
     const [events, setEvents] = useState<EventModel[]>([]);
 
-    useEffect(() => {
-        setEvents(generateEvents(4));
-    }, []);
+    // useEffect(() => {
+    //     setEvents(generateEvents(4));
+    // }, []);
 
     return (
         <div className={'px-16 py-16'}>

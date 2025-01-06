@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {EventModel} from "@/data/types";
 
 import {HeartOutlined} from "@ant-design/icons";
-import {generateEvents} from "@/data/generator";
+// import {generateEvents} from "@/data/generator";
 import Link from "next/link";
 import Image from "next/image";
 import {extractImageColors, getColorPalette, Palette} from "@/data/palette";
@@ -14,9 +14,9 @@ export default function BannerCarousel() {
     const [events, setEvents] = useState<EventModel[]>([]);
 
 
-    useEffect(() => {
-        setEvents(generateEvents(2));
-    }, []);
+    // useEffect(() => {
+    //     setEvents(generateEvents(2));
+    // }, []);
 
     return <Carousel autoplay arrows>
         {events.map((event, index) => (
@@ -86,7 +86,7 @@ export function CarouselItem2({image, cover, title, description, to}: {
                             <p
                                 className={`line-clamp-3 mt-0`}
                                 style={{
-                                    color: (colors?.darkMuted?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex))? '#FFFFFF' : '#000000' || '#FFFFFF', // Use lightMuted color for the description or default to white
+                                    color: (colors?.darkMuted?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex))? '#FFFFFF' : '#000000', // Use lightMuted color for the description or default to white
                                 }}
                             >
                                 {description}

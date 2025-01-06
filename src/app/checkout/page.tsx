@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { generateEvents } from "@/data/generator";
 import { SignInComponent } from "@/components/checkout/SignInComponent";
 import { SignUpComponent } from "@/components/checkout/SignUpComponent";
 import { CartComponent } from "@/components/checkout/CartComponent";

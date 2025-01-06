@@ -1,7 +1,7 @@
 'use client'
 import {Button, Carousel} from "antd";
 import {useEffect, useState} from "react";
-import {generateEvents} from "@/data/generator";
+// import {generateEvents} from "@/data/generator";
 
 import {EventModel} from "@/data/types";
 import {HeartOutlined} from "@ant-design/icons";
@@ -10,10 +10,10 @@ import {extractImageColors, getColorPalette, Palette} from "@/data/palette";
 export default function ComedyBanner() {
     const [events, setEvents] = useState<EventModel[]>([]);
 
-    // Fetch event data when the component mounts
-    useEffect(() => {
-        setEvents(generateEvents(2)); // Generate 2 sample events
-    }, []);
+    // // Fetch event data when the component mounts
+    // useEffect(() => {
+    //     setEvents(generateEvents(2)); // Generate 2 sample events
+    // }, []);
 
     return (
         <Carousel autoplay arrows>
@@ -84,7 +84,7 @@ export function CarouselItem2({image, cover, title, description, to}: {
                             <p
                                 className={`line-clamp-3 mt-0`}
                                 style={{
-                                    color: (colors?.darkMuted?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex))? '#FFFFFF' : '#000000' || '#FFFFFF', // Use lightMuted color for the description or default to white
+                                    color: (colors?.darkMuted?.hex === (colors?.darkMuted?.hex || colors?.lightMuted?.hex))? '#FFFFFF' : '#000000', // Use lightMuted color for the description or default to white
                                 }}
                             >
                                 {description}

@@ -116,4 +116,9 @@ export function generateVenueTable(): VenueTable {
         available: faker.number.int({ min: 0, max: 10 }),
     };
 }
+
+export function generateEvents(amount?: number){
+
+    return Array.from({length: amount? amount: 5}, () => generateEvent())
+}
 export default generateVenue;

@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {EventModel} from "@/data/types";
-import {generateEvents} from "@/data/generator";
+// import {generateEvents} from "@/data/generator";
 import {Button} from "antd";
 import EventComponent from "@/components/eventComponent";
 
@@ -8,9 +8,9 @@ import EventComponent from "@/components/eventComponent";
 export default function CategoryFeatures() {
     const [events, setEvents] = useState<EventModel[]>([]);
 
-    useEffect(() => {
-        setEvents(generateEvents(5));
-    }, []);
+    // useEffect(() => {
+    //     setEvents(generateEvents(5));
+    // }, []);
 
     return (
         <div className={'px-16 py-16'}>
