@@ -19,7 +19,7 @@ export default function CountrySelector() {
     return (
         <Select
             defaultValue={initialCountry}
-            className='border-0 bg-transparent p-0 mx-1 text-white'
+            className='border-0 bg-transparent p-0 mx-1 text-white max-md:w-full'
             onChange={handleChange}
         >
             <Option value='GH'>

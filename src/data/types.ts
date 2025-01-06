@@ -1,5 +1,3 @@
-import store from "@/data/store";
-
 
 export enum EventType {
     Clubbing = "clubbing",
@@ -87,6 +85,14 @@ export const VenueTypeList = [
 ]
 
 export interface EventModel {
+
+    subCategory?: string;
+
+    image: string[];
+    viewCount: number;
+    weightedRating: number;
+    ticketSales: number;
+
     eventName: string;
     eventHostId: string;
     poster: string;
@@ -118,6 +124,8 @@ export interface EventModel {
         saved: boolean;
         id?: string;
     };
+    revenue: number,
+    scanners: Scanner[],
 }
 
 export interface Ticket {
@@ -127,10 +135,9 @@ export interface Ticket {
     ticketsAvailable: number;
     ticketsLeft: number;
     sold: number;
-    saleEnd?: Date; // Optional
-    saleStart?: Date; // Optional
+    saleEnd?: Date | string; // Optional
+    saleStart?: Date | string; // Optional
 }
-
 export interface Discount {
     id: string;
     ticketIds: string[];
@@ -141,7 +148,7 @@ export interface Discount {
 }
 
 export interface Venue {
-    id: string;
+    _id: string;
     name: string;
     street: string;
     city: string;
@@ -149,13 +156,18 @@ export interface Venue {
     country: string;
     links: { name: string, url: string }[];
     followers: number;
-    cover: string;
+    images: string[];
     capacity: number;
     type: VenueType;
     yearEvents: number | 0;
     description?: string;
     phone: string;
     email: string;
+    poster: string;
+    userId: string;
+    events?: EventModel[];
+    tables?: VenueTable[];
+    recurringEvents?: RecurringEvent[];
 }
 
 export interface CartItem {
@@ -194,7 +206,110 @@ export interface CombinedTicket {
     }[];
     totalPrice: number;
     status: string;
-    scanned: boolean;
     createdAt: string;
     amountPaid: number;
+}
+
+export interface Transaction {
+    _id: string;
+    reference: string;
+    eventId: string | EventModel;
+    hostId: string;
+    attendeeId: string;
+    user?: {
+        [ key: string ]: string;
+    }
+    amount: number;
+    status: 'PENDING' | 'SUCCESS' | 'FAILED';
+    createdAt?: Date;
+    updatedAt?: Date;
+    cumulativeRevenue: number | 0;
+}
+
+export type Scanner = {
+    _id:string,
+    eventId: string,
+    email: string,
+    activated: boolean,
+    name: string,
+    scannedTickets: number,
+};
+
+export interface User {
+    id:string
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+    organization?: string;
+    gender?: string;
+    phone?: number;
+    country: string;
+    activatedEmail?: boolean;
+    activatedPhone?: boolean;
+    userType: string;
+    image?: string[];
+    accountActive?: boolean;
+    createdAt?: Date;
+    availableBalance: number;
+    pendingBalance: number;
+    withdrawalAccounts: WithdrawalAccount[];
+}
+
+export interface WithdrawalAccount {
+    _id: string;
+    userId: string;
+    type: string;
+    name: string;
+    accountNumber: string;
+    bank_code?: string;
+    currency?: string;
+    bank_name?: string;
+    recipient_code?: string;
+    service: 'Pawapay' | 'Paystack';
+    createdAt?: Date;
+    active?: boolean;
+    flagged?: boolean;
+    reason?: string;
+}
+export interface Payout {
+    amount: number;
+    currency: string;
+    status?: 'pending' | 'approved' | 'rejected';
+    reason?: string;
+    walletId: string;
+    withdrawalAccountId: string;
+    userId: string;
+    approvedBy?: string;
+    createdAt?: Date;
+}
+
+export interface Wallet {
+    userId: string;
+    balance: number;
+    prevBalance: number;
+    pendingBalance: number;
+    pendingPrevBalance: number;
+    currency: string;
+}
+
+export interface VenueTable {
+    name: string,
+    venueId: string,
+    description: string,
+    minimumSpend: number,
+    available: number,
+}
+
+export interface RecurringEvent {
+    id: string
+    venueId: string
+    startDate: Date
+    endDate: Date
+    name: string
+    description: string
+    dayOfWeek: number
+    tables: VenueTable[]
+    startTime: string
+    endTime: string
 }

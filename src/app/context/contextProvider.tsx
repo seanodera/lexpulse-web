@@ -17,6 +17,7 @@ import {fetchExchangeRates} from "@/data/slices/cartSlice";
 import {fetchTickets} from "@/data/slices/ticketsSlice";
 import LoadingScreen from "@/components/LoadingScreen";
 import {getCountry} from "@/data/utils";
+import { fetchVenuesAsync } from "@/data/slices/venueSlice";
 
 
 export default function ContextProvider({children}: { children: React.ReactNode }) {
@@ -40,9 +41,9 @@ export default function ContextProvider({children}: { children: React.ReactNode 
         dispatch(fetchPopular());
         dispatch(fetchPromoted());
         dispatch(fetchExchangeRates());
-
+        dispatch(fetchVenuesAsync());
         console.log('Fetching')
-    }, [country]);
+    }, [country, dispatch]);
 
 
 
@@ -57,7 +58,9 @@ export default function ContextProvider({children}: { children: React.ReactNode 
     }
     return <div>
         {pathname !== '/login' && <Header/>}
-        <div className={`${pathname !== '/' && pathname !== '/login' && 'pt-[4.5rem]'}`}>
+        <div 
+        // className={`${pathname !== '/' && pathname !== '/login' && 'pt-[4.5rem]'}`}
+        >
             {children}
         </div>
         {pathname !== '/login' && <Footer/>}

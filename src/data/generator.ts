@@ -1,96 +1,119 @@
 
 // Function to generate fake events using Faker
 import {faker} from "@faker-js/faker";
-import {EventModel, EventType, Ticket, Venue, VenueTypeList} from "./types";
+import {EventModel, EventType, EventTypeList, Ticket, Venue, VenueTable, VenueTypeList} from "./types";
 
-export function generateEvents(count: number): EventModel[] {
-    const events: EventModel[] = [];
 
-    for (let i = 0; i < count; i++) {
-        const eventType = faker.helpers.objectValue(EventType); // Random event category
-        const ticketCount = faker.number.int({ min: 3, max: 5 }); // Generate 1 to 3 ticket types per event
 
-        // Generate tickets
-        const tickets: Ticket[] = Array.from({ length: ticketCount }, () => {
-            const stock = faker.number.int({min: 50, max: 1000});
-            return ({
-                _id: '',
-                ticketType: faker.string.alphanumeric(6),
-                name: faker.commerce.productName(),
-                price: faker.number.float({min: 10, max: 300, multipleOf: 0.01}),
-                // description: faker.lorem.sentence(),
-                ticketsAvailable: stock,
-                ticketsLeft: stock,
-                sold: faker.number.int({min: 0, max: stock}),
-            });
-        });
-        const venueSaved = faker.datatype.boolean();
-        // Generate event details
-        const event: EventModel = {
-            eventName: faker.company.catchPhraseNoun(),
-            poster: faker.image.urlLoremFlickr({category: 'poster'}), // Event poster
-            eventDate: faker.date.future(), // Random future date
-            location: faker.location.city() + ', ' + faker.location.country(),
-            cover: faker.image.urlLoremFlickr({category: 'concert'}), // Event cover image
-            _id: faker.string.alphanumeric(8), // Unique event ID
-            category: eventType as EventType, // Random event category
-            ticketInfo: tickets, // Tickets array
-            description: faker.lorem.paragraphs({min: 2, max: 8}),
-            createdAt: faker.date.recent(),
-            venue: {
-                name: faker.word.noun(),
-                street: faker.location.streetAddress(),
-                city: faker.location.city(),
-                country: faker.location.country(),
-                saved: venueSaved,
-                id: venueSaved ? faker.string.alphanumeric(8) : undefined,
-                district: faker.location.state()
+function generateVenue(id?:  string): Venue {
+    const finalId = id? id: faker.string.uuid();
+    return {
+        _id: finalId,
+        name: faker.company.name(),
+        street: faker.location.streetAddress(),
+        city: faker.location.city(),
+        district: faker.location.county(),
+        country: ['Kenya', 'Ghana'][faker.number.int({ min: 0, max: 1 })],
+        links: [
+            {
+                name: "Website",
+                url: faker.internet.url()
             },
-            minAge: 18,
-            dress: 'Casual',
-            startSalesDate: faker.date.recent(),
-            endSalesDate: faker.date.future(),
-            eventEnd: "",
-            eventHostId: "",
-            country: "",
-            currency: "",
-            approved: false
-        };
-
-        events.push(event);
-    }
-
-    return events;
+            {
+                name: "Facebook",
+                url: faker.internet.url()
+            }
+        ],
+        followers: faker.number.int({ min: 0, max: 10000 }),
+        images: [
+            faker.image.urlPicsumPhotos(),
+            faker.image.urlPicsumPhotos(),
+            faker.image.urlPicsumPhotos(),
+            faker.image.urlPicsumPhotos()
+        ],
+        capacity: faker.number.int({ min: 50, max: 1000 }),
+        type:VenueTypeList[faker.number.int({min:0 , max: VenueTypeList.length - 1})],
+        yearEvents: faker.number.int({ min: 0, max: 100 }),
+        description: faker.lorem.paragraph(),
+        phone: faker.phone.number(),
+        email: faker.internet.email(),
+        poster: faker.image.urlPicsumPhotos(),
+        userId: faker.string.uuid(),
+        events: Array.from({length: 5}, () => generateEvent(finalId)),
+        tables: Array.from({length: 5}, () => generateVenueTable()),
+        recurringEvents: [
+    
+        ]
+    };
 }
 
-export function generateVenues(count: number, {id}: {id?: string}): Venue[] {
-    const venues:Venue[] = [];
-    {
-        for (let i = 0; i < count; i++) {
-            const venue: Venue = {
-                name: faker.word.noun({strategy: 'fail'}),
-                street: faker.location.streetAddress(),
-                city: faker.location.city(),
-                country: faker.location.country(),
-                district: faker.location.state(),
-                id: id ? id : faker.string.alphanumeric(8),
-                links: [
-                    {
-                        name: 'Website',
-                        url: faker.internet.url(),
-                    }
-                ],
-                followers: faker.number.int({min: 2, max: 300}),
-                cover: faker.image.urlLoremFlickr({category: 'venue'}),
-                capacity: faker.number.int({min: 2, max: 400}),
-                type: VenueTypeList[faker.number.int({min:0 , max: VenueTypeList.length - 1})],
-                yearEvents: faker.number.int(40),
-                phone: faker.phone.number(),
-                email: faker.internet.email({}),
-            };
-            venues.push(venue);
-        }
-    }
-
-    return venues;
+export function generateEvent(venueId?:string): EventModel {
+    return {
+        subCategory: faker.commerce.department(),
+        image: [
+            faker.image.urlPicsumPhotos(),
+            faker.image.urlPicsumPhotos(),
+            faker.image.urlPicsumPhotos(),
+            faker.image.urlPicsumPhotos()
+        ],
+        viewCount: faker.number.int({ min: 0, max: 10000 }),
+        weightedRating: faker.number.float({ min: 0, max: 5 }),
+        ticketSales: faker.number.int({ min: 0, max: 1000 }),
+        eventName: faker.company.name(),
+        eventHostId: faker.string.uuid(),
+        poster: faker.image.urlPicsumPhotos(),
+        eventDate: faker.date.future(),
+        location: faker.location.streetAddress(),
+        cover: faker.image.urlPicsumPhotos(),
+        _id: faker.string.uuid(),
+        description: faker.lorem.paragraph(),
+        category: EventTypeList[faker.number.int({min: 0, max: EventTypeList.length-1})],
+        ticketInfo: generateTickets(), // Populate with Ticket objects as needed
+        discount: [], // Populate with Discount objects as needed
+        createdAt: faker.date.past(),
+        startSalesDate: faker.date.future(),
+        endSalesDate: faker.date.future(),
+        eventEnd: faker.date.future().toISOString(),
+        minAge: faker.number.int({ min: 18, max: 21 }),
+        dress: faker.lorem.word(),
+        lastEntry: faker.date.future().toISOString(),
+        country: faker.location.country(),
+        currency: faker.finance.currencyCode(),
+        approved: faker.datatype.boolean(),
+        venue: {
+            name: faker.company.name(),
+            street: faker.location.streetAddress(),
+            city: faker.location.city(),
+            country: faker.location.country(),
+            district: faker.location.county(),
+            saved: faker.datatype.boolean(),
+            id: venueId? venueId: faker.string.uuid(),
+        },
+        revenue: faker.number.int({ min: 0, max: 100000 }),
+        scanners: [], // Populate with Scanner objects as needed
+    };
 }
+
+
+export function generateTickets(): Ticket[] {
+    return Array.from({ length: 3 }, () => ({
+        _id: faker.string.uuid(),
+        ticketType: faker.commerce.productName(),
+        price: faker.number.int({ min: 10, max: 100 }),
+        ticketsAvailable: faker.number.int({ min: 50, max: 500 }),
+        ticketsLeft: faker.number.int({ min: 0, max: 50 }),
+        sold: faker.number.int({ min: 0, max: 50 }),
+        saleEnd: faker.date.future(),
+        saleStart: faker.date.past(),
+    }));
+}
+export function generateVenueTable(): VenueTable {
+    return {
+        name: faker.commerce.productName(),
+        venueId: faker.string.uuid(),
+        description: faker.lorem.sentence(),
+        minimumSpend: faker.number.int({ min: 0, max: 1000 }),
+        available: faker.number.int({ min: 0, max: 10 }),
+    };
+}
+export default generateVenue;
