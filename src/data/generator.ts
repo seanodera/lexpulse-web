@@ -1,7 +1,7 @@
 
 // Function to generate fake events using Faker
 import {faker} from "@faker-js/faker";
-import {EventModel, EventType, EventTypeList, Ticket, Venue, VenueTable, VenueTypeList} from "./types";
+import {EventModel, EventType, EventTypeList, RecurringEvent, Ticket, Venue, VenueTable, VenueTypeList} from "./types";
 
 
 
@@ -40,10 +40,8 @@ function generateVenue(id?:  string): Venue {
         poster: faker.image.urlPicsumPhotos(),
         userId: faker.string.uuid(),
         events: Array.from({length: 5}, () => generateEvent(finalId)),
-        tables: Array.from({length: 5}, () => generateVenueTable()),
-        recurringEvents: [
-    
-        ]
+        tables: Array.from({length: 5}, () => generateVenueTable(finalId)),
+        recurringEvents: generateRecurringEvents()
     };
 }
 
@@ -107,18 +105,49 @@ export function generateTickets(): Ticket[] {
         saleStart: faker.date.past(),
     }));
 }
-export function generateVenueTable(): VenueTable {
+export function generateVenueTable(venueId: string): VenueTable {
     return {
-        name: faker.commerce.productName(),
-        venueId: faker.string.uuid(),
-        description: faker.lorem.sentence(),
-        minimumSpend: faker.number.int({ min: 0, max: 1000 }),
-        available: faker.number.int({ min: 0, max: 10 }),
-    };
+    name: faker.commerce.productName(),
+    venueId: venueId,
+    description: faker.lorem.sentence(),
+    minimumSpend: faker.number.int({ min: 0, max: 1000 }),
+    available: faker.number.int({ min: 0, max: 10 }),
+    id: faker.string.uuid(),
+};
 }
 
 export function generateEvents(amount?: number){
 
     return Array.from({length: amount? amount: 5}, () => generateEvent())
+}
+
+export function generateRecurringEvents() : RecurringEvent[] {
+    let daysOfWeek:number[] = [];
+
+    return Array.from({length: 4}, (_, index) => {
+
+        let dayOfWeek = faker.number.int({min: 0, max: 6});
+        while (daysOfWeek.includes(dayOfWeek)){
+            dayOfWeek = faker.number.int({min: 0, max: 6});
+        };
+        daysOfWeek.push(dayOfWeek);
+
+        return {
+            id: index.toString(),
+            venueId: faker.string.uuid(),
+            startDate: faker.date.future().toISOString(),
+            endDate: faker.date.future().toISOString(),
+            name: faker.company.name(),
+            description: faker.lorem.sentence(),
+            frequency: faker.number.int({ min: 1, max: 10 }),
+            dayOfWeek: dayOfWeek,
+            time: faker.date.future().toISOString(),
+            active: faker.datatype.boolean(),
+            startTime: '08:00',
+            endTime: '19:00',
+            tables: [],
+            poster: faker.image.urlPicsumPhotos(),
+        }
+    });
 }
 export default generateVenue;

@@ -1,7 +1,10 @@
 "use client";
+import CarouselList from "@/components/common/CarouselList";
 import EventComponent from "@/components/eventComponent";
+import ReservationComponent from "@/components/venues/reservationComponent";
 import VenueBanner from "@/components/venues/venueBanner";
 import { setCurrentVenue } from "@/data/slices/venueSlice";
+import { EventModel, RecurringEvent } from "@/data/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import {
   ContainerOutlined,
@@ -20,7 +23,7 @@ import {
 } from "antd";
 import { countries } from "country-data";
 import { useParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -28,6 +31,15 @@ export default function VenuePage() {
   const { venueId } = useParams();
   const dispatch = useAppDispatch();
   const venue = useAppSelector((state) => state.venue.currentVenue);
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
 
   useEffect(() => {
     if (venueId && (!venue || venue._id !== venueId)) {
@@ -86,94 +98,57 @@ export default function VenuePage() {
           ) : (
             <Skeleton active />
           )}
+
+          {venue?.recurringEvents && venue.recurringEvents.length !== 0 && (
+            <div>
+              <Title level={3}> Daily Activities</Title>
+              <CarouselList
+                items={[...venue.recurringEvents].sort(
+                  (a, b) => a.dayOfWeek - b.dayOfWeek
+                )}
+                itemsToShow={3}
+                renderer={(event: RecurringEvent, index) => (
+                  <div>
+                    <img
+                      src={event.poster}
+                      className="aspect-square w-full rounded-lg"
+                      alt="No Image"
+                    />
+                    <Title className="text-current leading-none mt-1" level={5}>
+                      {event.name}
+                    </Title>
+                    <Text className="text-current gap-2 items-center font-medium">
+                      Every{" "}
+                      <Button type={"primary"} ghost size={"small"}>
+                        {daysOfWeek[event.dayOfWeek]}
+                      </Button>
+                    </Text>
+                    <Paragraph ellipsis={{ rows: 2 }}>
+                      {event.description}
+                    </Paragraph>
+                  </div>
+                )}
+              />
+            </div>
+          )}
         </div>
         <div>
-          <div className="bg-dark rounded-xl p-4">
-            <div>
-              <div className="flex items-center justify-between gap-4">
-                <Title level={4} className="text-white m-0 mb-1">
-                  Reserve
-                </Title>
-                <DatePicker placeholder="Reservation Date" />
-              </div>
-              <table className="text-white w-full mt-4">
-                <thead>
-                  <tr>
-                    <td>
-                      <Title level={5} className="text-current leading-none font-medium">
-                        Table
-                      </Title>
-                    </td>
-                    <td>
-                      <Title level={5} className="text-current leading-none font-medium">
-                        Guests
-                      </Title>
-                    </td>
-                    <td className="text-end">
-                      <Title
-                        level={5}
-                        className="text-current leading-none font-medium text-end"
-                      >
-                        Minimum Spend
-                      </Title>
-                    </td>
-                  </tr>
-                </thead>
-                <tbody className="bg-dark">
-        {venue?.tables?.map((table, index) => (
-          <tr key={index} className={`py-4 rounded-lg ${index === 0 ? 'bg-primary' : ''}`}>
-            <td className="py-2 px-4 rounded-s-lg">{table.name}</td>
-            <td className="py-2 px-4">4</td>
-            <td className="py-2 px-4 text-end rounded-e-lg">
-              {countries.all.find(
-                (c) => c.name.toLocaleLowerCase() === venue.country.toLocaleLowerCase()
-              )?.currencies[0]} {table.minimumSpend}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-              </table>
-            </div>
-          </div>
+          {venue ? <ReservationComponent venue={venue} /> : <Skeleton />}
         </div>
       </div>
-      <div className="px-4 md:px-16 pb-8 ">
-        <Title level={3}>Venues Events</Title>
-        <Carousel
-          ref={carouselRef}
-          className={"gap-4 text-dark"}
-          slidesToShow={4}
-          slidesToScroll={4}
-          autoplay={false}
-          infinite
-          swipe
-        >
-          {venue?.events?.map((event, index) => (
-            <div
-              key={index}
-              className={`px-4 text-dark ${
-                index === 0
-                  ? "pl-0"
-                  : `${
-                      index % 4 === 0 || index === venue.events!.length - 1
-                        ? "pr-0"
-                        : ""
-                    }`
-              } `}
-            >
-              <EventComponent event={event} />
-            </div>
-          ))}
-        </Carousel>
-        <div className="flex justify-end items-center gap-4">
-          <Button shape="circle" icon={<LeftOutlined />} onClick={handlePrev} />
-          <Button
-            shape="circle"
-            icon={<RightOutlined />}
-            onClick={handleNext}
+      {venue && venue.events ? (
+        <div className="px-4 md:px-16 pb-8 ">
+          <Title level={3}>Venues Events</Title>
+          <CarouselList
+            items={venue.events}
+            renderer={(item: EventModel, index: number) => (
+              <EventComponent event={item} />
+            )}
           />
         </div>
-      </div>
+      ) : (
+        <Skeleton.Node />
+      )}
     </div>
   );
 }

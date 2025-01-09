@@ -294,6 +294,7 @@ export interface Wallet {
 }
 
 export interface VenueTable {
+    id:string,
     name: string,
     venueId: string,
     description: string,
@@ -304,12 +305,13 @@ export interface VenueTable {
 export interface RecurringEvent {
     id: string
     venueId: string
-    startDate: Date
-    endDate: Date
+    startDate: Date|string
+    endDate: Date|string
     name: string
     description: string
     dayOfWeek: number
-    tables: VenueTable[]
+    tables: string[]
     startTime: string
     endTime: string
+    poster?: string
 }
