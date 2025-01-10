@@ -12,7 +12,7 @@ import {
     selectEventsLoading
 } from "@/data/slices/eventsSlice";
 import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
-import {checkUser, selectCurrentUser} from "@/data/slices/authSlice";
+import {checkUser, initializeAppAsync, selectCurrentUser} from "@/data/slices/authSlice";
 import {fetchExchangeRates} from "@/data/slices/cartSlice";
 import {fetchTickets} from "@/data/slices/ticketsSlice";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -25,7 +25,7 @@ export default function ContextProvider({children}: { children: React.ReactNode 
     const dispatch = useAppDispatch();
     const country = useAppSelector(selectEventsCountry);
     const user = useAppSelector(selectCurrentUser);
-    const loading = useAppSelector(selectEventsLoading);
+    const {loading, appLoading} = useAppSelector(state => state.auth);
 
     useEffect(() => {
         getCountry().then((value) => {
@@ -36,12 +36,8 @@ export default function ContextProvider({children}: { children: React.ReactNode 
     }, []);
 
     useEffect(() => {
-        dispatch(checkUser());
-        dispatch(fetchUpcoming());
-        dispatch(fetchPopular());
-        dispatch(fetchPromoted());
-        dispatch(fetchExchangeRates());
-        dispatch(fetchVenuesAsync());
+        dispatch(initializeAppAsync());
+       
         console.log('Fetching')
     }, [country, dispatch]);
 
@@ -53,7 +49,7 @@ export default function ContextProvider({children}: { children: React.ReactNode 
         }
     }, [dispatch, user]);
 
-    if (loading) {
+    if (loading || appLoading) {
         return <LoadingScreen/>;
     }
     return <div>

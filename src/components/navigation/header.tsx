@@ -35,7 +35,7 @@ export default function Navbar() {
     <div
       className={`flex justify-between items-center px-4 py-2 w-full ${
         !isHomePage
-          ? `bg-transparent text-dark ${windowHeight > 50 && "fixed bg-white"}`
+          ? `bg-white shadow-sm shadow-primary-50 text-dark z-30 ${windowHeight > 50 && "fixed bg-white"}`
           : `shadow-sm fixed z-30  text-white ${
               windowHeight < 50 ? "bg-transparent " : "bg-dark"
             }`
