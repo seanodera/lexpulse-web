@@ -3,10 +3,8 @@ import {useParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
 import {selectFocusTicket, setFocusTicket} from "@/data/slices/ticketsSlice";
-import {selectFocusEvent} from "@/data/slices/eventsSlice";
 import {CombinedTicket, EventModel} from "@/data/types";
 import TicketBanner from "@/components/tickets/banner";
-import ListTicketComponent from "@/components/tickets/list_ticket_component";
 
 
 export default function SingleTicketPage(){

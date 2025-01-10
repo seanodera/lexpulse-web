@@ -4,7 +4,7 @@ import { countries } from "country-data";
 import { formatDate, isSameDay } from "date-fns";
 import { useEffect, useState } from "react";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 export default function ReservationComponent({ venue }: { venue: Venue }) {
   const daysOfWeek = [
     "Sunday",
@@ -77,11 +77,12 @@ export default function ReservationComponent({ venue }: { venue: Venue }) {
                 <Text className="text-current">
                   From {recurringEvent.startTime} to {recurringEvent.endTime}
                 </Text>
+                <Paragraph className="text-current">{recurringEvent.description}</Paragraph>
               </div>
             </div>
           </div>
         )}
-       {!ongoingEvent && <table className="text-white w-full mt-4">
+       {!ongoingEvent && <table className="text-white w-full mt-4 space-y-5 border-separate border-spacing-y-2">
           <thead>
             <tr>
               <td>
@@ -114,7 +115,7 @@ export default function ReservationComponent({ venue }: { venue: Venue }) {
             {venue?.tables?.map((table, index) => (
               <tr
                 key={index}
-                className={`py-4 rounded-lg ${index === 0 ? "bg-primary" : ""}`}
+                className={`py-4 border-spacing-y-2 rounded-lg ${index === 0 ? "bg-primary" : "bg-gray-500 bg-opacity-50"}`}
               >
                 <td className="py-2 px-4 rounded-s-lg">{table.name}</td>
                 <td className="py-2 px-4">4</td>
@@ -144,6 +145,7 @@ export default function ReservationComponent({ venue }: { venue: Venue }) {
         </div>
             
         }
+        {!ongoingEvent && <Button className="my-3" type="primary" block size="large">Reserve</Button>}
       </div>
     </div>
   );
