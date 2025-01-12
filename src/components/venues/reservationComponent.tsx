@@ -48,9 +48,10 @@ export default function ReservationComponent({ venue }: { venue: Venue }) {
           </Title>
           <DatePicker
             placeholder="Reservation Date"
-            onChange={(date) => {
+            onChange={(date:any) => {
               setSelectedDate(date.toDate());
             }}
+            value={selectedDate}
             format={"DD MMM YYYY"}
           />
         </div>
