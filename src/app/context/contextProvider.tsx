@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Header from "@/components/navigation/header";
 import Footer from "@/components/navigation/footer";
 import {usePathname} from "next/navigation";
@@ -12,7 +12,7 @@ import {
     selectEventsLoading
 } from "@/data/slices/eventsSlice";
 import {useAppDispatch, useAppSelector} from "@/hooks/hooks";
-import {checkUser, selectCurrentUser} from "@/data/slices/authSlice";
+import {checkUser, initializeApp, selectCurrentUser} from "@/data/slices/authSlice";
 import {fetchExchangeRates} from "@/data/slices/cartSlice";
 import {fetchTickets} from "@/data/slices/ticketsSlice";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -25,22 +25,21 @@ export default function ContextProvider({children}: { children: React.ReactNode 
     const country = useAppSelector(selectEventsCountry);
     const user = useAppSelector(selectCurrentUser);
     const loading = useAppSelector(selectEventsLoading);
-
+    const [countryLoading,setCountryLoading] = useState<boolean>(true);
+    const appLoading = useAppSelector(state => state.auth.appLoading)
     useEffect(() => {
+        setCountryLoading(true);
         getCountry().then((value) => {
             if (value){
                 dispatch(changeRegion(value.name))
+                setCountryLoading(false);
             }
         })
     }, []);
 
     useEffect(() => {
         dispatch(checkUser());
-        dispatch(fetchUpcoming());
-        dispatch(fetchPopular());
-        dispatch(fetchPromoted());
-        dispatch(fetchExchangeRates());
-
+        dispatch(initializeApp())
         console.log('Fetching')
     }, [country]);
 
@@ -52,7 +51,7 @@ export default function ContextProvider({children}: { children: React.ReactNode 
         }
     }, [dispatch, user]);
 
-    if (loading) {
+    if (loading || countryLoading|| appLoading) {
         return <LoadingScreen/>;
     }
     return <div>

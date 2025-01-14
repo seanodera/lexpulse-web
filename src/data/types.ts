@@ -198,3 +198,21 @@ export interface CombinedTicket {
     createdAt: string;
     amountPaid: number;
 }
+
+export interface OperationType {
+    operationType: string;
+    minTransactionLimit: string;
+    maxTransactionLimit: string;
+}
+
+export interface Correspondent {
+    correspondent: string;
+    currency: string;
+    ownerName: string;
+    operationTypes: OperationType[];
+}
+
+export interface PawaPayCountryData {
+    country: string;
+    correspondents: Correspondent[];
+}

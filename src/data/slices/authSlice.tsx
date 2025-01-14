@@ -3,7 +3,9 @@ import axios from 'axios';
 import { parseCookies, setCookie, destroyCookie } from 'nookies';
 import Router from 'next/router';
 import {createFile, getCountry} from "@/data/utils";
-import {RootState} from "@/data/store"; // Router for navigation in Next.js
+import {RootState} from "@/data/store";
+import {fetchPopular, fetchPromoted, fetchUpcoming} from "@/data/slices/eventsSlice";
+import {fetchExchangeRates, fetchPawaPayConfigs} from "@/data/slices/cartSlice"; // Router for navigation in Next.js
 const baseUrl = process.env.NEXT_PUBLIC_API_HOST_URL;
 
 const common = { baseUrl };
@@ -13,6 +15,7 @@ interface AuthState {
     token: string | null;
     loading: boolean;
     error: string | null;
+    appLoading: boolean;
 }
 
 const initialState: AuthState = {
@@ -20,6 +23,7 @@ const initialState: AuthState = {
     token: null,
     loading: false,
     error: null,
+    appLoading: false,
 };
 
 // Utility functions for managing cookies
@@ -58,9 +62,9 @@ export const signInHost = createAsyncThunk<any, { email: string; password: strin
 );
 
 // Thunk for signing up
-export const signUpHost = createAsyncThunk<any, { firstName: string; lastName: string; email: string; password: string }>(
+export const signUpHost = createAsyncThunk<any, { firstName: string; lastName: string; email: string; password: string,dateOfBirth:string }>(
     'auth/signUp',
-    async ({ firstName, lastName, email, password }, { dispatch, rejectWithValue }) => {
+    async ({ firstName, lastName, email, password,dateOfBirth }, { dispatch, rejectWithValue }) => {
         try {
             const country = await getCountry();
 
@@ -73,6 +77,7 @@ export const signUpHost = createAsyncThunk<any, { firstName: string; lastName: s
             formData.append('gender', 'Unset');
             formData.append('password', password);
             formData.append('userType', 'user');
+            formData.append('dob',dateOfBirth );
             // formData.append('image', image, 'profile.jpg');
 
             const config = { headers: { 'Content-Type': 'multipart/form-data' } };
@@ -122,6 +127,22 @@ export const fetchUser = createAsyncThunk<any, string>(
         }
     }
 );
+
+export const initializeApp = createAsyncThunk('auth/IntializeApp', async (_,{dispatch, rejectWithValue}) => {
+    try {
+        await Promise.all([dispatch(fetchUpcoming()),
+        dispatch(fetchPopular()),
+        dispatch(fetchPromoted()),
+        dispatch(fetchExchangeRates()), dispatch(fetchPawaPayConfigs())]);
+
+    } catch (error) {
+       if (error instanceof Error){
+           return rejectWithValue(error.message);
+       } else {
+           rejectWithValue('Error Occured');
+       }
+    }
+})
 
 // Auth Slice
 const authSlice = createSlice({
@@ -188,6 +209,16 @@ const authSlice = createSlice({
             })
             .addCase(fetchUser.rejected, (state, action: PayloadAction<any>) => {
                 state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(initializeApp.pending, (state) => {
+                state.appLoading = true;
+            })
+            .addCase(initializeApp.fulfilled, (state) => {
+                state.appLoading = false;
+            })
+            .addCase(initializeApp.rejected, (state, action: PayloadAction<any>) => {
+                state.appLoading = false;
                 state.error = action.payload;
             });
     },
