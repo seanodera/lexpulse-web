@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Header from "@/components/navigation/header";
 import Footer from "@/components/navigation/footer";
 import {usePathname} from "next/navigation";
@@ -25,19 +25,22 @@ export default function ContextProvider({children}: { children: React.ReactNode 
     const dispatch = useAppDispatch();
     const country = useAppSelector(selectEventsCountry);
     const user = useAppSelector(selectCurrentUser);
-    const {loading, appLoading} = useAppSelector(state => state.auth);
-
+    const loading = useAppSelector(selectEventsLoading);
+    const [countryLoading,setCountryLoading] = useState<boolean>(true);
+    const appLoading = useAppSelector(state => state.auth.appLoading)
     useEffect(() => {
+        setCountryLoading(true);
         getCountry().then((value) => {
             if (value){
                 dispatch(changeRegion(value.name))
+                setCountryLoading(false);
             }
         })
     }, []);
 
     useEffect(() => {
         dispatch(initializeAppAsync());
-       
+
         console.log('Fetching')
     }, [country, dispatch]);
 
@@ -49,12 +52,12 @@ export default function ContextProvider({children}: { children: React.ReactNode 
         }
     }, [dispatch, user]);
 
-    if (loading || appLoading) {
+    if (loading || countryLoading|| appLoading) {
         return <LoadingScreen/>;
     }
     return <div>
         {pathname !== '/login' && <Header/>}
-        <div 
+        <div
         // className={`${pathname !== '/' && pathname !== '/login' && 'pt-[4.5rem]'}`}
         >
             {children}

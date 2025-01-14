@@ -206,6 +206,7 @@ export interface CombinedTicket {
     }[];
     totalPrice: number;
     status: string;
+    scanned: boolean;
     createdAt: string;
     amountPaid: number;
 }
@@ -314,4 +315,23 @@ export interface RecurringEvent {
     startTime: string
     endTime: string
     poster?: string
+}
+
+
+export interface OperationType {
+    operationType: string;
+    minTransactionLimit: string;
+    maxTransactionLimit: string;
+}
+
+export interface Correspondent {
+    correspondent: string;
+    currency: string;
+    ownerName: string;
+    operationTypes: OperationType[];
+}
+
+export interface PawaPayCountryData {
+    country: string;
+    correspondents: Correspondent[];
 }

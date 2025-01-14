@@ -126,3 +126,9 @@ export async function createFile({url, name = 'image'}: { url: string, name?: st
     return new File([data], `${name}.jpg`, metadata);
 }
 
+export function toMoneyFormat(amount: number) {
+
+    return amount.toLocaleString(undefined, {
+        minimumFractionDigits: 2, maximumFractionDigits: 2,
+    });
+}
